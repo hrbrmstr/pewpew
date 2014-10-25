@@ -184,7 +184,8 @@ body {
       })
 
     var centers = [] ;
-    d3.csv("country_latlon.csv", function(data) { centers = data; });
+    // d3.csv("country_latlon.csv", function(data) { centers = data; });
+    d3.tsv("country_centroids_primary.csv", function(data) { centers = data; });
 
 
     var hits = FixedQueue( 7, [  ] );
@@ -230,16 +231,16 @@ body {
            document.getElementById('pew').load();
            document.getElementById('pew').play();
 
-           hits.push( { origin : { latitude: +centers[src].latitude, longitude: +centers[src].longitude },
-                        destination : { latitude: +centers[dst].latitude, longitude: +centers[dst].longitude } } );
+           hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
+                        destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
 
 
            map.arc(hits, {strokeWidth: 2});
 
-           $('#attackdiv').append(centers[src]["iso 3166 country"] + " (" + randomIP() + ") " +
+           $('#attackdiv').append(centers[src]["SHORT_NAME"] + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " + 
-                                  centers[dst]["iso 3166 country"]+  " (" + randomIP() + ") " + 
-                                  " <span style='color:blue'>(" + attack_type[Math.floor((Math.random() * attack_type.length))] + ")</span> " +
+                                  centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " + 
+                                  " <span style='color:steelblue'>(" + attack_type[Math.floor((Math.random() * attack_type.length))] + ")</span> " +
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
 
