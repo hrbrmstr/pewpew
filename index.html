@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: black;
+}
+</style>
+</head>
+<body>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <audio id="pew" src="Blaster-Solo.wav" preload="auto"></audio>
+  <center><div id="container1" style="position: relative; width: 100vw; height: 100vh; max-width:100%; max-height:100%"></div></center>
+     
+     <script>
+
+
+        // Create a constructor for the fixed-length queue. This is
+        // really more of a FACTORY than a construtor since an
+        // entirely tangential object is returned.
+        function FixedQueue( size, initialValues ){
+ 
+            // If there are no initial arguments, default it to
+            // an empty value so we can call the constructor in
+            // a uniform way.
+            initialValues = (initialValues || []);
+ 
+            // Create the fixed queue array value.
+            var queue = Array.apply( null, initialValues );
+ 
+            // Store the fixed size in the queue.
+            queue.fixedSize = size;
+ 
+            // Add the class methods to the queue. Some of these have
+            // to override the native Array methods in order to make
+            // sure the queue lenght is maintained.
+            queue.push = FixedQueue.push;
+            queue.splice = FixedQueue.splice;
+            queue.unshift = FixedQueue.unshift;
+ 
+            // Trim any initial excess from the queue.
+            FixedQueue.trimTail.call( queue );
+ 
+            // Return the new queue.
+            return( queue );
+ 
+        }
+ 
+ 
+        // I trim the queue down to the appropriate size, removing
+        // items from the beginning of the internal array.
+        FixedQueue.trimHead = function(){
+ 
+            // Check to see if any trimming needs to be performed.
+            if (this.length <= this.fixedSize){
+ 
+                // No trimming, return out.
+                return;
+ 
+            }
+ 
+            // Trim whatever is beyond the fixed size.
+            Array.prototype.splice.call(
+                this,
+                0,
+                (this.length - this.fixedSize)
+            );
+ 
+        };
+ 
+ 
+        // I trim the queue down to the appropriate size, removing
+        // items from the end of the internal array.
+        FixedQueue.trimTail = function(){
+ 
+            // Check to see if any trimming needs to be performed.
+            if (this.length <= this.fixedSize){
+ 
+                // No trimming, return out.
+                return;
+ 
+            }
+ 
+            // Trim whatever is beyond the fixed size.
+            Array.prototype.splice.call(
+                this,
+                this.fixedSize,
+                (this.length - this.fixedSize)
+            );
+ 
+        };
+ 
+ 
+        // I synthesize wrapper methods that call the native Array
+        // methods followed by a trimming method.
+        FixedQueue.wrapMethod = function( methodName, trimMethod ){
+ 
+            // Create a wrapper that calls the given method.
+            var wrapper = function(){
+ 
+                // Get the native Array method.
+                var method = Array.prototype[ methodName ];
+ 
+                // Call the native method first.
+                var result = method.apply( this, arguments );
+ 
+                // Trim the queue now that it's been augmented.
+                trimMethod.call( this );
+ 
+                // Return the original value.
+                return( result );
+ 
+            };
+ 
+            // Return the wrapper method.
+            return( wrapper );
+ 
+        };
+ 
+ 
+        // Wrap the native methods.
+        FixedQueue.push = FixedQueue.wrapMethod(
+            "push",
+            FixedQueue.trimHead
+        );
+ 
+        FixedQueue.splice = FixedQueue.wrapMethod(
+            "splice",
+            FixedQueue.trimTail
+        );
+ 
+        FixedQueue.unshift = FixedQueue.wrapMethod(
+            "unshift",
+            FixedQueue.trimTail
+        );
+ 
+
+      var map = new Datamap({
+        scope: 'world',
+        element: document.getElementById('container1'),
+        projection: 'winkel3',
+        
+        fills: {
+          defaultFill: 'black',
+        },
+
+        geographyConfig: {
+        dataUrl: null, //if not null, datamaps will fetch the map JSON (currently only supports topojson)
+        hideAntarctica: true,
+        borderWidth: 0.75,
+        borderColor: '#4393c3',
+        popupTemplate: function(geography, data) { //this function should just return a string
+          return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
+        },
+        popupOnHover: true, //disable the popup while hovering
+        highlightOnHover: false,
+        highlightFillColor: 'black',
+        highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
+        highlightBorderWidth: 2
+    },
+        
+      })
+
+    var centers = [] ;
+    d3.csv("country_latlon.csv", function(data) { centers = data; });
+
+
+    var hits = FixedQueue( 7, [  ] );
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    var attacks = {
+     
+        failed: 0,
+        success_count: 0,
+     
+        interval: getRandomInt(100, 3000),
+     
+        init: function(){
+           setTimeout(
+               jQuery.proxy(this.getData, this),
+               this.interval
+           );
+        },
+     
+       getData: function(){
+           var self = this;
+
+           // RAMDOM SAMPLE
+
+           src = Math.floor((Math.random() * centers.length));
+           dst = Math.floor((Math.random() * centers.length));
+           if (dst == src) {
+            dst = src + 1 ;
+            if (dst > centers.length-1) { dst = centers.length-1 }
+           }
+
+           document.getElementById('pew').load();
+           document.getElementById('pew').play();
+
+           hits.push( { origin : { latitude: +centers[src].latitude, longitude: +centers[src].longitude },
+                        destination : { latitude: +centers[dst].latitude, longitude: +centers[dst].longitude } } );
+
+
+           map.arc(hits, {strokeWidth: 2});
+
+
+           this.interval = getRandomInt(100, 3000);
+           this.init() ;
+       },
+     
+    };
+     
+    attacks.init();    
+
+    d3.select(window).on('resize', function(){ location.reload(); });
+
+    </script>
+</body>
+</html>
