@@ -189,6 +189,7 @@ body {
 
 
     var hits = FixedQueue( 7, [  ] );
+    var boom = FixedQueue( 7, [  ] );
 
     function getRandomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -228,7 +229,7 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
-           document.getElementById('pew').load();
+           // document.getElementById('pew').load();
            document.getElementById('pew').play();
 
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
@@ -237,10 +238,21 @@ body {
 
            map.arc(hits, {strokeWidth: 2});
 
+           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
+
+           boom.push( { radius: 7, latitude: +centers[dst].LAT, longitude: +centers[dst].LONG,
+                        fillOpacity: 0.5, attk: which_attack} );
+
+           map.bubbles(boom, {
+                popupTemplate: function(geo, data) {
+                  return '<div class="hoverinfo">' + data.attk + '</div>';
+                }
+            });
+
            $('#attackdiv').append(centers[src]["SHORT_NAME"] + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " + 
                                   centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " + 
-                                  " <span style='color:steelblue'>(" + attack_type[Math.floor((Math.random() * attack_type.length))] + ")</span> " +
+                                  " <span style='color:steelblue'>(" + which_attack + ")</span> " +
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
 
