@@ -7,6 +7,19 @@ body {
   padding: 0;
   background: black;
 }
+#attackdiv {
+  font-family: monosapce;
+  font-size:10px;
+  position:fixed; 
+  width:100%; 
+  height:100px; 
+  color:white;
+  background-color:black; 
+  padding:5px; 
+  bottom:0px; 
+  overflow-y: auto;
+}
+
 </style>
 </head>
 <body>
@@ -17,8 +30,11 @@ body {
   <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
   <audio id="pew" src="Blaster-Solo.wav" preload="auto"></audio>
   <center><div id="container1" style="position: relative; width: 100vw; height: 100vh; max-width:100%; max-height:100%"></div></center>
-     
+  <div id="attackdiv"></div>
+    
      <script>
+
+         attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Heartbleed", "POODLE", "Sharknado" ]
 
 
         // Create a constructor for the fixed-length queue. This is
@@ -177,6 +193,14 @@ body {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    function getOctet() {
+      return Math.round(Math.random()*255);
+    }
+
+    function randomIP () {
+     return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet());
+    } 
+
     var attacks = {
      
         failed: 0,
@@ -212,6 +236,12 @@ body {
 
            map.arc(hits, {strokeWidth: 2});
 
+           $('#attackdiv').append(centers[src]["iso 3166 country"] + " (" + randomIP() + ") " +
+                                  " <span style='color:red'>attacks</span> " + 
+                                  centers[dst]["iso 3166 country"]+  " (" + randomIP() + ") " + 
+                                  " <span style='color:blue'>(" + attack_type[Math.floor((Math.random() * attack_type.length))] + ")</span> " +
+                                  "<br/>");
+           $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
 
            this.interval = getRandomInt(100, 3000);
            this.init() ;
