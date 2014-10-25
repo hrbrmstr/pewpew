@@ -81,6 +81,7 @@ body {
     var tng = $.getUrlVar('tng');
     var wargames = $.getUrlVar('wargames');
     var b5 = $.getUrlVar('b5');
+    var nofx = $.getUrlVar('nofx');
 
     snd_id = "starwars" ;
 
@@ -216,8 +217,10 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
-           document.getElementById(snd_id).load();
-           document.getElementById(snd_id).play();
+           if (typeof nofx === 'undefined') {
+             document.getElementById(snd_id).load();
+             document.getElementById(snd_id).play();
+           }
 
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
                         destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
