@@ -58,8 +58,8 @@ body {
 
     var bad_day = $.getUrlVar('bad_day');
 
-    if (bad_day != "") {
-      attack_min=100 ;
+    if !((typeof bad_day === 'undefined')) {
+      attack_min=100;
       attack_max=100;
     }
 
