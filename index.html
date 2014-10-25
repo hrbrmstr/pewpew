@@ -32,154 +32,98 @@ body {
   <center><div id="container1" style="position: relative; width: 100vw; height: 100vh; max-width:100%; max-height:100%"></div></center>
   <div id="attackdiv"></div>
     
-     <script>
+  <script>
 
-         attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Heartbleed", "POODLE", "Sharknado" ]
+    attack_min = 100 ;
+    attack_max = 3000 ;
 
+    attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Heartbleed", "POODLE", "Sharknado" ] ;
 
-        // Create a constructor for the fixed-length queue. This is
-        // really more of a FACTORY than a construtor since an
-        // entirely tangential object is returned.
-        function FixedQueue( size, initialValues ){
- 
-            // If there are no initial arguments, default it to
-            // an empty value so we can call the constructor in
-            // a uniform way.
-            initialValues = (initialValues || []);
- 
-            // Create the fixed queue array value.
-            var queue = Array.apply( null, initialValues );
- 
-            // Store the fixed size in the queue.
-            queue.fixedSize = size;
- 
-            // Add the class methods to the queue. Some of these have
-            // to override the native Array methods in order to make
-            // sure the queue lenght is maintained.
-            queue.push = FixedQueue.push;
-            queue.splice = FixedQueue.splice;
-            queue.unshift = FixedQueue.unshift;
- 
-            // Trim any initial excess from the queue.
-            FixedQueue.trimTail.call( queue );
- 
-            // Return the new queue.
-            return( queue );
- 
+    $.extend({
+      getUrlVars: function(){
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+          hash = hashes[i].split('=');
+          vars.push(hash[0]);
+          vars[hash[0]] = hash[1];
         }
+        return vars;
+      },
+      getUrlVar: function(name){
+        return $.getUrlVars()[name];
+      }
+    });
+
+    var bad_day = $.getUrlVar('bad_day');
+
+    if (bad_day != "") {
+      attack_min=100 ;
+      attack_max=100;
+    }
+
+    function FixedQueue( size, initialValues ){
+      initialValues = (initialValues || []);
+      var queue = Array.apply( null, initialValues );
+      queue.fixedSize = size;
+      queue.push = FixedQueue.push;
+      queue.splice = FixedQueue.splice;
+      queue.unshift = FixedQueue.unshift;
+      FixedQueue.trimTail.call( queue );
+      return( queue );
+    }
+
+    FixedQueue.trimHead = function(){
+      if (this.length <= this.fixedSize){ return; }
+      Array.prototype.splice.call( this, 0, (this.length - this.fixedSize) );
+    };
+
+    FixedQueue.trimTail = function(){
+      if (this.length <= this.fixedSize) { return; }
+      Array.prototype.splice.call( this, this.fixedSize, (this.length - this.fixedSize)
+      );
+    };
  
+    FixedQueue.wrapMethod = function( methodName, trimMethod ){
+      var wrapper = function(){
+        var method = Array.prototype[ methodName ];
+        var result = method.apply( this, arguments );
+        trimMethod.call( this );
+        return( result ); 
+      };
+      return( wrapper ); 
+    };
+
+    FixedQueue.push = FixedQueue.wrapMethod( "push", FixedQueue.trimHead );
  
-        // I trim the queue down to the appropriate size, removing
-        // items from the beginning of the internal array.
-        FixedQueue.trimHead = function(){
- 
-            // Check to see if any trimming needs to be performed.
-            if (this.length <= this.fixedSize){
- 
-                // No trimming, return out.
-                return;
- 
-            }
- 
-            // Trim whatever is beyond the fixed size.
-            Array.prototype.splice.call(
-                this,
-                0,
-                (this.length - this.fixedSize)
-            );
- 
-        };
- 
- 
-        // I trim the queue down to the appropriate size, removing
-        // items from the end of the internal array.
-        FixedQueue.trimTail = function(){
- 
-            // Check to see if any trimming needs to be performed.
-            if (this.length <= this.fixedSize){
- 
-                // No trimming, return out.
-                return;
- 
-            }
- 
-            // Trim whatever is beyond the fixed size.
-            Array.prototype.splice.call(
-                this,
-                this.fixedSize,
-                (this.length - this.fixedSize)
-            );
- 
-        };
- 
- 
-        // I synthesize wrapper methods that call the native Array
-        // methods followed by a trimming method.
-        FixedQueue.wrapMethod = function( methodName, trimMethod ){
- 
-            // Create a wrapper that calls the given method.
-            var wrapper = function(){
- 
-                // Get the native Array method.
-                var method = Array.prototype[ methodName ];
- 
-                // Call the native method first.
-                var result = method.apply( this, arguments );
- 
-                // Trim the queue now that it's been augmented.
-                trimMethod.call( this );
- 
-                // Return the original value.
-                return( result );
- 
-            };
- 
-            // Return the wrapper method.
-            return( wrapper );
- 
-        };
- 
- 
-        // Wrap the native methods.
-        FixedQueue.push = FixedQueue.wrapMethod(
-            "push",
-            FixedQueue.trimHead
-        );
- 
-        FixedQueue.splice = FixedQueue.wrapMethod(
-            "splice",
-            FixedQueue.trimTail
-        );
- 
-        FixedQueue.unshift = FixedQueue.wrapMethod(
-            "unshift",
-            FixedQueue.trimTail
-        );
+    FixedQueue.splice = FixedQueue.wrapMethod( "splice", FixedQueue.trimTail );
+
+    FixedQueue.unshift = FixedQueue.wrapMethod( "unshift", FixedQueue.trimTail );
  
 
-      var map = new Datamap({
+    var map = new Datamap({
+
         scope: 'world',
         element: document.getElementById('container1'),
         projection: 'winkel3',
         
-        fills: {
-          defaultFill: 'black',
-        },
+        fills: { defaultFill: 'black', },
 
         geographyConfig: {
-        dataUrl: null, //if not null, datamaps will fetch the map JSON (currently only supports topojson)
-        hideAntarctica: true,
-        borderWidth: 0.75,
-        borderColor: '#4393c3',
-        popupTemplate: function(geography, data) { //this function should just return a string
-          return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
+          dataUrl: null, //if not null, datamaps will fetch the map JSON (currently only supports topojson)
+          hideAntarctica: true,
+          borderWidth: 0.75,
+          borderColor: '#4393c3',
+          popupTemplate: function(geography, data) { //this function should just return a string
+            return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
+          },
+          popupOnHover: true, //disable the popup while hovering
+          highlightOnHover: false,
+          highlightFillColor: 'black',
+          highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
+          highlightBorderWidth: 2
         },
-        popupOnHover: true, //disable the popup while hovering
-        highlightOnHover: false,
-        highlightFillColor: 'black',
-        highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
-        highlightBorderWidth: 2
-    },
         
       })
 
@@ -191,24 +135,18 @@ body {
     var hits = FixedQueue( 7, [  ] );
     var boom = FixedQueue( 7, [  ] );
 
-    function getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
 
-    function getOctet() {
-      return Math.round(Math.random()*255);
-    }
+    function getOctet() {return Math.round(Math.random()*255);}
 
-    function randomIP () {
-     return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet());
-    } 
+    function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); } 
 
     var attacks = {
      
         failed: 0,
         success_count: 0,
      
-        interval: getRandomInt(100, 3000),
+        interval: getRandomInt(attack_min, attack_max),
      
         init: function(){
            setTimeout(
@@ -217,10 +155,9 @@ body {
            );
         },
      
-       getData: function(){
-           var self = this;
+       getData: function() {
 
-           // RAMDOM SAMPLE
+           var self = this;
 
            src = Math.floor((Math.random() * centers.length));
            dst = Math.floor((Math.random() * centers.length));
@@ -229,7 +166,7 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
-           // document.getElementById('pew').load();
+           document.getElementById('pew').load();
            document.getElementById('pew').play();
 
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
@@ -256,7 +193,7 @@ body {
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
 
-           this.interval = getRandomInt(100, 3000);
+           this.interval = getRandomInt(attack_min, attack_max);
            this.init() ;
        },
      
