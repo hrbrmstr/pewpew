@@ -52,7 +52,7 @@ body {
     attack_min = 100 ;
     attack_max = 3000 ;
 
-    attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Heartbleed", "POODLE", "Sharknado" ] ;
+    attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Spotter", "Heartbleed", "POODLE", "Sharknado" ] ;
 
     $.extend({
       getUrlVars: function(){
@@ -73,6 +73,7 @@ body {
 
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
+    var china_mode = $.getUrlVar('china_mode');
 
     if (typeof bad_day !== 'undefined'){
       attack_min=100;
@@ -81,6 +82,10 @@ body {
 
     if (typeof org_name !== 'undefined') {
       $("#titlediv").html(org_name + " IPew Attack Map")
+    }
+
+    if (typeof china_mode !== 'undefined') {
+      attack_type = [ "ZOMGOSH CHINA!!!!!!" ];
     }
 
     function FixedQueue( size, initialValues ){
@@ -178,10 +183,14 @@ body {
        getData: function() {
 
            var self = this;
+           var src = Math.floor((Math.random() * centers.length));
 
-           src = Math.floor((Math.random() * centers.length));
+           if (typeof china_mode !== 'undefined') {
+             src = 33;
+           }
+
            dst = Math.floor((Math.random() * centers.length));
-           if (dst == src) {
+           if ((dst == src) || (dst == 33)) {
             dst = src + 1 ;
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
