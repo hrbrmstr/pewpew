@@ -103,7 +103,7 @@ body {
     }
 
     if (typeof org_name !== 'undefined') {
-      $("#titlediv").html(org_name + " IPew Attack Map")
+      $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map")
     }
 
     if (typeof china_mode !== 'undefined') {
@@ -175,17 +175,13 @@ body {
       })
 
     var centers = [] ;
-    // d3.csv("country_latlon.csv", function(data) { centers = data; });
     d3.tsv("country_centroids_primary.csv", function(data) { centers = data; });
-
 
     var hits = FixedQueue( 7, [  ] );
     var boom = FixedQueue( 7, [  ] );
 
     function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
-
     function getOctet() {return Math.round(Math.random()*255);}
-
     function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); } 
 
     var attacks = {
