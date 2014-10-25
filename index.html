@@ -42,7 +42,11 @@ body {
   <script src="http://d3js.org/topojson.v1.min.js"></script>
   <script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
   <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <audio id="pew" src="Blaster-Solo.wav" preload="auto"></audio>
+  <audio id="starwars" src="Blaster-Solo.wav" preload="auto"></audio>
+  <audio id="tng" src="tng_torpedo_clean.mp3" preload="auto"></audio>
+  <audio id="b5" src="B5-interceptor1.wav" preload="auto"></audio>
+  <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
+
   <center><div id="container1" style="position: relative; width: 100vw; height: 100vh; max-width:100%; max-height:100%"></div></center>
   <div id="titlediv">IPew Attack Map</div>
   <div id="attackdiv"></div>
@@ -74,6 +78,21 @@ body {
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
     var china_mode = $.getUrlVar('china_mode');
+    var tng = $.getUrlVar('tng');
+
+    snd_id = "starwars" ;
+
+    if (typeof tng !== 'undefined'){
+      snd_id = "tng" ;
+    }
+
+    if (typeof b5 !== 'undefined'){
+      snd_id = "b5" ;
+    }
+
+    if (typeof wargames !== 'undefined'){
+      snd_id = "wargames" ;
+    }
 
     if (typeof bad_day !== 'undefined'){
       attack_min=100;
@@ -195,8 +214,8 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
-           document.getElementById('pew').load();
-           document.getElementById('pew').play();
+           document.getElementById(snd_id).load();
+           document.getElementById(snd_id).play();
 
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
                         destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
