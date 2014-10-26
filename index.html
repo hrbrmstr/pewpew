@@ -72,7 +72,9 @@ body {
     // add/change the attack types here
     attack_type = [ "port scan", "ssh brutish force", "Thought Leader Tweet",
                     "SYN FLOOD BA-BY", "Spotter", "Heartbleed", "POODLE", "Sharknado",
-                    "CORGI Attack", "Ping of Death" ] ;
+                    "CORGI Attack", "Ping of Death", "Conficker", "Goldfinger" ] ;
+
+    audio_type = [ "starwars", "tng", "b5", "wargames", "pew" ]
 
     // need this to more easily grab URI query parameters
     $.extend({
@@ -103,6 +105,7 @@ body {
     var b5 = $.getUrlVar('b5');
     var nofx = $.getUrlVar('nofx');
     var pew = $.getUrlVar('pew');
+    var allfx = $.getUrlVar('allfx')
 
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
@@ -233,6 +236,9 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
+           if (typeof allfx !== 'undefined') {
+             snd_id = audio_type[Math.floor((Math.random() * audio_type.length))];
+           }
            // no guarantee of sound playing w/o the load - stupid browsers
            if (typeof nofx === 'undefined') {
              document.getElementById(snd_id).load();
