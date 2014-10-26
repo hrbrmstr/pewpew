@@ -12,33 +12,33 @@ body {
   font-family: monosapce;
   text-align: center;
   font-size:48px;
-  position:fixed; 
-  width:100%; 
-  height:50px; 
+  position:fixed;
+  width:100%;
+  height:50px;
   color:white;
-  background-color:black; 
-  padding:5px; 
-  top:0px; 
+  background-color:black;
+  padding:5px;
+  top:0px;
   overflow-y: auto;
 }
 
 #attackdiv {
   font-family: monosapce;
   font-size:10px;
-  position:fixed; 
-  width:100%; 
-  height:100px; 
+  position:fixed;
+  width:100%;
+  height:100px;
   color:white;
-  background-color:black; 
-  padding:5px; 
-  bottom:0px; 
+  background-color:black;
+  padding:5px;
+  bottom:0px;
   overflow-y: auto;
 }
 #container1 {
-  position: relative; 
-  width: 100vw; 
-  height: 100vh; 
-  max-width:100%; 
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width:100%;
   max-height:100%
 }
 </style>
@@ -62,16 +62,19 @@ body {
   <center><div id="container1"></div></center>
   <div id="titlediv">IPew Attack Map</div>
   <div id="attackdiv"></div>
-    
+
   <script>
 
     // setup default min/max timer range for random draw
-    attack_min = 100 ; 
+    attack_min = 100 ;
     attack_max = 2000 ;
 
     // add/change the attack types here
-    attack_type = [ "port scan", "ssh brutish force", "Thought Leader Tweet", 
-                    "SYN FLOOD BA-BY", "Spotter", "Heartbleed", "POODLE", "Sharknado" ] ;
+    attack_type = [ "port scan", "ssh brutish force", "Thought Leader Tweet",
+                    "SYN FLOOD BA-BY", "Spotter", "Heartbleed", "POODLE", "Sharknado",
+                    "CORGI Attack", "Ping of Death", "Conficker", "Goldfinger" ] ;
+
+    audio_type = [ "starwars", "tng", "b5", "wargames", "pew" ]
 
     // need this to more easily grab URI query parameters
     $.extend({
@@ -101,7 +104,8 @@ body {
     var wargames = $.getUrlVar('wargames');
     var b5 = $.getUrlVar('b5');
     var nofx = $.getUrlVar('nofx');
-    var pew = $.getUrlVar('nofx');
+    var pew = $.getUrlVar('pew');
+    var allfx = $.getUrlVar('allfx')
 
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
@@ -140,15 +144,15 @@ body {
       Array.prototype.splice.call( this, this.fixedSize, (this.length - this.fixedSize)
       );
     };
- 
+
     FixedQueue.wrapMethod = function( methodName, trimMethod ){
       var wrapper = function(){
         var method = Array.prototype[ methodName ];
         var result = method.apply( this, arguments );
         trimMethod.call( this );
-        return( result ); 
+        return( result );
       };
-      return( wrapper ); 
+      return( wrapper );
     };
 
     FixedQueue.push = FixedQueue.wrapMethod( "push", FixedQueue.trimHead );
@@ -157,7 +161,7 @@ body {
 
     // the fun begins!
     //
-    // pretty simple setup -> 
+    // pretty simple setup ->
     // * make base Datamap
     // setup timers to add random events to a queue
     // update the Datamap
@@ -166,17 +170,17 @@ body {
 
         scope: 'world',
         element: document.getElementById('container1'),
-        projection: 'winkel3', 
+        projection: 'winkel3',
         // change the projection to something else only if you have absolutely no cartographic sense
-        
+
         fills: { defaultFill: 'black', },
 
         geographyConfig: {
-          dataUrl: null, 
+          dataUrl: null,
           hideAntarctica: true,
           borderWidth: 0.75,
           borderColor: '#4393c3',
-          popupTemplate: function(geography, data) { 
+          popupTemplate: function(geography, data) {
             return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
           },
           popupOnHover: true,
@@ -185,7 +189,7 @@ body {
           highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
           highlightBorderWidth: 2
         },
-        
+
       })
 
     // we read in a modified file of all country centers
@@ -201,22 +205,22 @@ body {
     // we need random numbers and also a way to build random ip addresses
     function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
     function getOctet() {return Math.round(Math.random()*255);}
-    function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); } 
+    function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); }
 
     // doing this a bit fancy for a hack, but it makes it
-    // easier to group code functions together and have variables 
+    // easier to group code functions together and have variables
     // out of global scope
     var attacks = {
-          
+
         interval: getRandomInt(attack_min, attack_max),
-     
+
         init: function(){
            setTimeout(
                jQuery.proxy(this.getData, this),
                this.interval
            );
         },
-     
+
        getData: function() {
 
            var self = this;
@@ -232,6 +236,9 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
+           if (typeof allfx !== 'undefined') {
+             snd_id = audio_type[Math.floor((Math.random() * audio_type.length))];
+           }
            // no guarantee of sound playing w/o the load - stupid browsers
            if (typeof nofx === 'undefined') {
              document.getElementById(snd_id).load();
@@ -257,8 +264,8 @@ body {
 
            // update the scrolling attack div
            $('#attackdiv').append(centers[src]["SHORT_NAME"] + " (" + randomIP() + ") " +
-                                  " <span style='color:red'>attacks</span> " + 
-                                  centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " + 
+                                  " <span style='color:red'>attacks</span> " +
+                                  centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " +
                                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
@@ -267,11 +274,11 @@ body {
            this.interval = getRandomInt(attack_min, attack_max);
            this.init() ;
        },
-     
+
     };
-     
+
     // start the ball rolling!
-    attacks.init();    
+    attacks.init();
 
     // lazy-dude's responsive window
     d3.select(window).on('resize', function() { location.reload(); });
