@@ -7,6 +7,7 @@ body {
   padding: 0;
   background: black;
 }
+
 #titlediv {
   font-family: monosapce;
   text-align: center;
@@ -33,31 +34,46 @@ body {
   bottom:0px; 
   overflow-y: auto;
 }
-
+#container1 {
+  position: relative; 
+  width: 100vw; 
+  height: 100vh; 
+  max-width:100%; 
+  max-height:100%
+}
 </style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
 </head>
+
 <body>
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
-  <script src="http://d3js.org/topojson.v1.min.js"></script>
-  <script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
   <audio id="starwars" src="Blaster-Solo.wav" preload="auto"></audio>
   <audio id="tng" src="tng_torpedo_clean.mp3" preload="auto"></audio>
   <audio id="b5" src="B5-interceptor1.wav" preload="auto"></audio>
   <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
+  <audio id="pew" src="pew.mp3" preload="auto"></audio>
 
-  <center><div id="container1" style="position: relative; width: 100vw; height: 100vh; max-width:100%; max-height:100%"></div></center>
+  <center><div id="container1"></div></center>
   <div id="titlediv">IPew Attack Map</div>
   <div id="attackdiv"></div>
     
   <script>
 
-    attack_min = 100 ;
+    // setup default min/max timer range for random draw
+    attack_min = 100 ; 
     attack_max = 3000 ;
 
-    attack_type = [ "port scan", "ssh brute force", "SYN FLOOD", "Spotter", "Heartbleed", "POODLE", "Sharknado" ] ;
+    // add/change the attack types here
+    attack_type = [ "port scan", "ssh brutish force", "Thought Leader Tweet", 
+                    "SYN FLOOD BA-BY", "Spotter", "Heartbleed", "POODLE", "Sharknado" ] ;
 
+    // need this to more easily grab URI query parameters
     $.extend({
       getUrlVars: function(){
         var vars = [], hash;
@@ -75,6 +91,9 @@ body {
       }
     });
 
+    // here's where we deal with parameters
+    // try to grab them, see if they exist, make changes to defaults if they do
+
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
     var china_mode = $.getUrlVar('china_mode');
@@ -84,32 +103,21 @@ body {
     var nofx = $.getUrlVar('nofx');
 
     snd_id = "starwars" ;
+    if (typeof tng !== 'undefined') { snd_id = "tng" ; }
+    if (typeof b5 !== 'undefined') { snd_id = "b5" ; }
+    if (typeof wargames !== 'undefined') { snd_id = "wargames" ; }
+    if (typeof pew !== 'undefined') { snd_id = "pew" ; }
 
-    if (typeof tng !== 'undefined'){
-      snd_id = "tng" ;
+    if (typeof bad_day !== 'undefined') {
+      attack_min=200;
+      attack_max=200;
     }
 
-    if (typeof b5 !== 'undefined'){
-      snd_id = "b5" ;
-    }
+    if (typeof org_name !== 'undefined') { $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map") }
 
-    if (typeof wargames !== 'undefined'){
-      snd_id = "wargames" ;
-    }
+    if (typeof china_mode !== 'undefined') { attack_type = [ "ZOMGOSH CHINA!!!!!!" ]; }
 
-    if (typeof bad_day !== 'undefined'){
-      attack_min=100;
-      attack_max=100;
-    }
-
-    if (typeof org_name !== 'undefined') {
-      $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map")
-    }
-
-    if (typeof china_mode !== 'undefined') {
-      attack_type = [ "ZOMGOSH CHINA!!!!!!" ];
-    }
-
+    // we maintain a fixed queue of "attacks" via this class
     function FixedQueue( size, initialValues ){
       initialValues = (initialValues || []);
       var queue = Array.apply( null, initialValues );
@@ -143,29 +151,34 @@ body {
     };
 
     FixedQueue.push = FixedQueue.wrapMethod( "push", FixedQueue.trimHead );
- 
     FixedQueue.splice = FixedQueue.wrapMethod( "splice", FixedQueue.trimTail );
-
     FixedQueue.unshift = FixedQueue.wrapMethod( "unshift", FixedQueue.trimTail );
- 
+
+    // the fun begins!
+    //
+    // pretty simple setup -> 
+    // * make base Datamap
+    // setup timers to add random events to a queue
+    // update the Datamap
 
     var map = new Datamap({
 
         scope: 'world',
         element: document.getElementById('container1'),
-        projection: 'winkel3',
+        projection: 'winkel3', 
+        // change the projection to something else only if you have absolutely no cartographic sense
         
         fills: { defaultFill: 'black', },
 
         geographyConfig: {
-          dataUrl: null, //if not null, datamaps will fetch the map JSON (currently only supports topojson)
+          dataUrl: null, 
           hideAntarctica: true,
           borderWidth: 0.75,
           borderColor: '#4393c3',
-          popupTemplate: function(geography, data) { //this function should just return a string
+          popupTemplate: function(geography, data) { 
             return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
           },
-          popupOnHover: true, //disable the popup while hovering
+          popupOnHover: true,
           highlightOnHover: false,
           highlightFillColor: 'black',
           highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
@@ -174,21 +187,26 @@ body {
         
       })
 
+    // we read in a modified file of all country centers
     var centers = [] ;
     d3.tsv("country_centroids_primary.csv", function(data) { centers = data; });
+
+    // setup structures for the "hits" (arcs)
+    // and circle booms
 
     var hits = FixedQueue( 7, [  ] );
     var boom = FixedQueue( 7, [  ] );
 
+    // we need random numbers and also a way to build random ip addresses
     function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
     function getOctet() {return Math.round(Math.random()*255);}
     function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); } 
 
+    // doing this a bit fancy for a hack, but it makes it
+    // easier to group code functions together and have variables 
+    // out of global scope
     var attacks = {
-     
-        failed: 0,
-        success_count: 0,
-     
+          
         interval: getRandomInt(attack_min, attack_max),
      
         init: function(){
@@ -203,9 +221,9 @@ body {
            var self = this;
            var src = Math.floor((Math.random() * centers.length));
 
-           if (typeof china_mode !== 'undefined') {
-             src = 33;
-           }
+           // source is always china if china_mode is set
+           // "Hi, Mandiant!!"
+           if (typeof china_mode !== 'undefined') { src = 33; }
 
            dst = Math.floor((Math.random() * centers.length));
            if ((dst == src) || (dst == 33)) {
@@ -213,28 +231,30 @@ body {
             if (dst > centers.length-1) { dst = centers.length-1 }
            }
 
+           // no guarantee of sound playing w/o the load - stupid browsers
            if (typeof nofx === 'undefined') {
              document.getElementById(snd_id).load();
              document.getElementById(snd_id).play();
            }
 
+           // add hit to the arc queue
+
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
                         destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
-
-
            map.arc(hits, {strokeWidth: 2});
 
-           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
+           // add boom to the bubbles queue
 
+           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
            boom.push( { radius: 7, latitude: +centers[dst].LAT, longitude: +centers[dst].LONG,
                         fillOpacity: 0.5, attk: which_attack} );
-
            map.bubbles(boom, {
                 popupTemplate: function(geo, data) {
                   return '<div class="hoverinfo">' + data.attk + '</div>';
                 }
             });
 
+           // update the scrolling attack div
            $('#attackdiv').append(centers[src]["SHORT_NAME"] + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " + 
                                   centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " + 
@@ -242,16 +262,19 @@ body {
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
 
+           // pick a new random time and start the timer again!
            this.interval = getRandomInt(attack_min, attack_max);
            this.init() ;
        },
      
     };
      
+    // start the ball rolling!
     attacks.init();    
 
-    d3.select(window).on('resize', function(){ location.reload(); });
+    // lazy-dude's responsive window
+    d3.select(window).on('resize', function() { location.reload(); });
 
-    </script>
+</script>
 </body>
 </html>
