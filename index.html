@@ -127,14 +127,14 @@ function about() {
   <div id="aboutdiv"><i class="fa fa-question-circle fa-2x" onClick="about();"></i></div>
 
   <div id="ccdiv">
-  <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" /></a></a>.
+  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" /></a>
   </div>
 
   <div id="about">
   <h3>About IPew</h3>
-  Attack maps are the <span style="font-family: monospace;">&lt;blink&gt;</span> tag of information security. They are pure eye candy, meant to scare the general public and <i>WOW</i> unsuspecting executives visiting Security Operations Centers. Yet, security vendors keep cranking them out. We didn't want organizations without "real" data or l33t animation skills to to feel left out, so we built this map for anyone to use. Plus, they're all missing sound effects! And, most (all, really) use mind-numbingly dumb map projections, begging the question: <i>"Does Greenland make my map look big?"</i>.<br/>
+  Attack maps are the <span style="font-family: monospace;">&lt;blink&gt;</span> tag of information security. They are pure eye candy, meant to scare the general public and <i>WOW</i> unsuspecting executives visiting Security Operations Centers. Yet, security vendors keep cranking them out. We didn't want organizations without "real" data or l33t animation skills to to feel left out, so we built this map for anyone to use [CC BY-SA]. Plus, they're all missing sound effects! And, most (all, really) use mind-numbingly dumb map projections, begging the question: <i>"Does Greenland make my map look big?"</i>.<br/>
   <br/>
-  The default map uses a (infrequently updated) statistical model for source "attack" node country of origin &amp; frequency while destinations are fully randomized. The defalt sound is a Star Wars "blaster" (guess which one!). Sounds can be customized; an organization name can be specified and there are a few other <i>interesting</i> options.<br/>
+  The default map uses a statistical model (infrequently updated) for source "attack" node country of origin &amp; frequency while destinations are fully randomized. The default sound is a Star Wars "blaster" (guess which one!). Sounds can be customized and an organization name can be specified, plus there are a few other <i>interesting</i> options.<br/>
   <br/>
   Check out the <a target=_blank href='http://github.com/hrbrmstr/pewpew'>github repository</a> for more information and instructions on how to customize the map options for maximum effect.<br/>
   <br/>
@@ -401,5 +401,31 @@ function about() {
     d3.select(window).on('resize', function() { location.reload(); });
 
 </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79740-6', 'datadrivensecurity.info');
+      ga('send', 'pageview');
+
+    </script>
+    <!-- Piwik -->
+    <script type="text/javascript"> 
+      var _paq = _paq || [];
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://rud.is/piwik//";
+        _paq.push(['setTrackerUrl', u+'piwik.php']);
+        _paq.push(['setSiteId', 1]);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+        g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+      })();
+
+    </script>
+    <noscript><p><img src="//rud.is/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+    <!-- End Piwik Code -->
 </body>
 </html>
