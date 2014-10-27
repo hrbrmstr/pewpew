@@ -26,7 +26,7 @@ body {
   font-family: monosapce;
   font-size:10px;
   position:fixed;
-  width:100%;
+  width:50%;
   height:100px;
   color:white;
   background-color:black;
@@ -34,6 +34,7 @@ body {
   bottom:0px;
   overflow-y: auto;
 }
+
 #container1 {
   position: relative;
   width: 100vw;
@@ -41,13 +42,63 @@ body {
   max-width:100%;
   max-height:100%
 }
+
+#about {
+  display: hidden; 
+}
+
+#aboutdiv {
+  text-align:right;
+  width:100px;
+  height:100px;
+  bottom:0px;
+  top:0px;
+  right:0px;
+  position:fixed;
+  padding:10px;
+  color: white;
+}
+
+#about {display:none;}
+
+/* Overlay */
+#simplemodal-overlay {background-color:#000;}
+
+/* Container */
+#simplemodal-container {height:440px; width:600px; color:#bbb; background-color:#333; border:4px solid #444; padding:12px;}
+#simplemodal-container .simplemodal-data {padding:8px;}
+#simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
+#simplemodal-container a {color:#ddd;}
+#simplemodal-container a.modalCloseImg {background:url(../img/basic/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
+#simplemodal-container h3 {color:#84b8d9;}
+#simplemodal-container a.modalCloseImg {
+  background:url(x.png) no-repeat; /* adjust url as required */
+  width:25px;
+  height:29px;
+  display:inline;
+  z-index:3200;
+  position:absolute;
+  top:-15px;
+  right:-18px;
+  cursor:pointer;
+}
+
 </style>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
-<script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
-<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/d3.geo.projection.v0.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script src="//datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="jquery.simplemodal-1.4.4.js"></script>
+
+<script>
+function about() {
+  $("#about").modal();
+}
+</script>
+
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
 </head>
 
@@ -58,10 +109,29 @@ body {
   <audio id="b5" src="B5-interceptor1.wav" preload="auto"></audio>
   <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
   <audio id="pew" src="pew.mp3" preload="auto"></audio>
+  <audio id="galaga" src="shot_sound.mp3" preload="auto"></audio>
 
   <center><div id="container1"></div></center>
   <div id="titlediv">IPew Attack Map</div>
   <div id="attackdiv"></div>
+  <div id="aboutdiv"><i class="fa fa-question-circle fa-2x" onClick="about();"></i></div>
+
+  <div id="about">
+  <h3>About IPew</h3>
+  Attack maps are the <span style="font-family: monospace;">&lt;blink&gt;</span> tag of information security. They are pure eye candy, meant to scare the general public and <i>WOW</i> unsuspecting executives visiting Security Operations Centers. Yet, security vendors keep cranking them out. We didn't want organizations without "real" data or l33t animation skills to to feel left out, so we built this map for anyone to use. Plus, they're all missing sound effects! And, most (all, really) use mind-numbingly dumb map projections, begging the question: <i>"Does Greenland make my map look big?"</i>.<br/>
+  <br/>
+  The default map uses a (infrequently updated) statistical model for source "attack" node country of origin &amp; frequency while destinations are fully randomized. The defalt sound is a Star Wars "blaster" (guess which one!). Sounds can be customized; an organization name can be specified and there are a few other <i>interesting</i> options.<br/>
+  <br/>
+  Check out the <a target=_blank href='http://github.com/hrbrmstr/pewpew'>github repository</a> for more information and instructions on how to customize the map options for maximum effect.<br/>
+  <br/>
+  Brought to you by <a target=_blank href="http://twitter.com/alexcpsec">@alexcpsec</a>, <a target=_blank href="http://twitter.com/hrbrmstr">@hrbrmstr</a> &amp; <a target=_blank href="http://dds.ec/blog">Data-Driven Security</a>
+  </div>
+
+  <!-- Use Hash-Bang to maintain scroll position when closing modal -->
+  <a href="#!" class="modal-close" title="Close this modal"
+      data-dismiss="modal" data-close="Close">&times;</a>
+</section>
+
 
   <script>
 
@@ -100,18 +170,21 @@ body {
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
     var china_mode = $.getUrlVar('china_mode');
+    var random_mode = $.getUrlVar('random_mode');
     var tng = $.getUrlVar('tng');
     var wargames = $.getUrlVar('wargames');
     var b5 = $.getUrlVar('b5');
     var nofx = $.getUrlVar('nofx');
     var pew = $.getUrlVar('pew');
     var allfx = $.getUrlVar('allfx')
+    var galaga = $.getUrlVar('galaga')
 
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
     if (typeof b5 !== 'undefined') { snd_id = "b5" ; }
     if (typeof wargames !== 'undefined') { snd_id = "wargames" ; }
     if (typeof pew !== 'undefined') { snd_id = "pew" ; }
+    if (typeof galaga !== 'undefined') { snd_id = "galaga" ; }
 
     if (typeof bad_day !== 'undefined') {
       attack_min=200;
@@ -158,6 +231,35 @@ body {
     FixedQueue.push = FixedQueue.wrapMethod( "push", FixedQueue.trimHead );
     FixedQueue.splice = FixedQueue.wrapMethod( "splice", FixedQueue.trimTail );
     FixedQueue.unshift = FixedQueue.wrapMethod( "unshift", FixedQueue.trimTail );
+
+    var rand = function(min, max) {
+        return Math.random() * (max - min) + min;
+    };
+     
+    var getRandomCountry = function(countries, weight) {
+
+        var total_weight = weight.reduce(function (prev, cur, i, arr) {
+            return prev + cur;
+        });
+         
+        var random_num = rand(0, total_weight);
+        var weight_sum = 0;
+         
+        for (var i = 0; i < countries.length; i++) {
+            weight_sum += weight[i];
+            weight_sum = +weight_sum.toFixed(2);
+             
+            if (random_num <= weight_sum) {
+                return countries[i];
+            }
+        }
+         
+    };
+
+    // need to make this dynamic since it's approximated from sources
+     
+    var countries = [9,22,29,49,56,58,78,82,102,117,139,176,186] ;
+    var weight = [0.000,0.001,0.004,0.008,0.009,0.037,0.181,0.002,0.000,0.415,0.006,0.075,0.088];
 
     // the fun begins!
     //
@@ -224,11 +326,12 @@ body {
        getData: function() {
 
            var self = this;
-           var src = Math.floor((Math.random() * centers.length));
+           var src = getRandomCountry(countries, weight);
 
            // source is always china if china_mode is set
            // "Hi, Mandiant!!"
            if (typeof china_mode !== 'undefined') { src = 33; }
+           if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * centers.length)); }
 
            dst = Math.floor((Math.random() * centers.length));
            if ((dst == src) || (dst == 33)) {
