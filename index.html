@@ -75,7 +75,7 @@ body {
 #simplemodal-overlay {background-color:#000;}
 
 /* Container */
-#simplemodal-container {height:440px; width:600px; color:#bbb; background-color:#333; border:4px solid #444; padding:12px;}
+#simplemodal-container {height:460px; width:600px; color:#bbb; background-color:#333; border:4px solid #444; padding:12px;}
 #simplemodal-container .simplemodal-data {padding:8px;}
 #simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
 #simplemodal-container a {color:#ddd;}
@@ -154,11 +154,13 @@ function about() {
     attack_max = 2000 ;
 
     // add/change the attack types here
-    attack_type = [ "port scan", "ssh brutish force", "Thought Leader Tweet",
-                    "SYN FLOOD BA-BY", "Spotter", "Heartbleed", "POODLE", "Sharknado",
-                    "CORGI Attack", "Ping of Death", "Conficker", "Goldfinger" ] ;
+    attack_type = [ "any port scan in a storm", "ssh brutish force", "Thought Leader Tweet",
+                    "SYN FLOOD BA-BY", "Spotty", "Heartbleed Hotel", "Po_ODLE", "Sharknado",
+                    "CORGI Attack", "Ping of DOOM", "Conficker", "Goldfinger", "SANDPAPER" ] ;
 
-    audio_type = [ "starwars", "tng", "b5", "wargames", "pew" ]
+    // gotta add types here if you add more sounds (or delete them)
+
+    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga" ]
 
     // need this to more easily grab URI query parameters
     $.extend({
