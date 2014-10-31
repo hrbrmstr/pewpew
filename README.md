@@ -1,6 +1,8 @@
+### IPew Attack Map
+
 ![img](pewpew.png)
 
-Why should security vendors be the only ones allowed to use inane, animated visualiztions to "compensate"? Now, **you** can have your very own IP attack map that's just as useful as everyone elses.
+Why should security vendors be the only ones allowed to use inane, animated visualizations to "compensate"? Now, **you** can have your very own IP attack map that's just as useful as everyone else's.
 
 IPew is a feature-rich, customizable D3 * javascript visualization, needing nothing more than a web server capable of serving static content and a sense of humor to operate. It's got all the standard features that are expected from it including:
 
@@ -10,7 +12,7 @@ IPew is a feature-rich, customizable D3 * javascript visualization, needing noth
 
 BUT, it has one critical element missing from the others: **SOUND EFFECTS**! What good is a global cyberbattle without some cool sounds.
 
-In all sersiousness, IPew provides a simple framwork - based on [Datamaps]() - for displaying cartographic data in a (mostly) responsive way and shows how to use dynamic data via javascript event timers and data queues.
+In all seriousness, IPew provides a simple framework - based on [Datamaps]() - for displaying cartographic data in a (mostly) responsive way and shows how to use dynamic data via javascript event timers and data queues.
 
 You can customize the display through a myriad of query string options:
 
