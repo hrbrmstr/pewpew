@@ -2,6 +2,8 @@
 
 ![img](pewpew.png)
 
+(a collaborative effort by @alexcpsec & @hrbrmstr)
+
 Why should security vendors be the only ones allowed to use inane, animated visualizations to "compensate"? Now, **you** can have your very own IP attack map that's just as useful as everyone else's.
 
 IPew is a feature-rich, customizable D3 * javascript visualization, needing nothing more than a web server capable of serving static content and a sense of humor to operate. It's got all the standard features that are expected from it including:
