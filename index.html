@@ -365,10 +365,11 @@ function about() {
            }
 
            // add hit to the arc queue
+           // use strokeColor to set arc line color
 
            hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
                         destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
-           map.arc(hits, {strokeWidth: 2});
+           map.arc(hits, {strokeWidth: 2, strokeColor: 'green'});
 
            // add boom to the bubbles queue
 
