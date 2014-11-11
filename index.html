@@ -185,6 +185,7 @@ function about() {
 
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
+    var chatt_mode = $.getUrlVar('chatt_mode');
     var china_mode = $.getUrlVar('china_mode');
     var random_mode = $.getUrlVar('random_mode');
     var tng = $.getUrlVar('tng');
@@ -208,7 +209,8 @@ function about() {
     }
 
     if (typeof org_name !== 'undefined') { $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map") }
-
+    
+    if (typeof chatt_mode !== 'undefined') { attack_type = [ "OMG NATION STATE CHATTANOOGA!!!" ]; }
     if (typeof china_mode !== 'undefined') { attack_type = [ "ZOMGOSH CHINA!!!!!!" ]; }
 
     // we maintain a fixed queue of "attacks" via this class
@@ -347,6 +349,11 @@ function about() {
            // source is always china if china_mode is set
            // "Hi, Mandiant!!"
            if (typeof china_mode !== 'undefined') { src = 33; }
+           // source is always Chattanooga if chatt_mode is set
+           // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
+           // change lat/longs in country_centroids_primary.csv for maximum effect!
+           if (typeof chatt_mode !== 'undefined') { src = 176; }
+           
            if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * centers.length)); }
 
            dst = Math.floor((Math.random() * centers.length));
