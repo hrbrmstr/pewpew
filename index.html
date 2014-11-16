@@ -95,11 +95,11 @@ body {
 
 </style>
 
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script src="//d3js.org/d3.geo.projection.v0.min.js"></script>
-<script src="//d3js.org/topojson.v1.min.js"></script>
-<script src="//datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
-<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="jquery.simplemodal-1.4.4.js"></script>
 
 <script>
@@ -210,9 +210,6 @@ function about() {
 
     if (typeof org_name !== 'undefined') { $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map") }
     
-    if (typeof chatt_mode !== 'undefined') { attack_type = [ "OMG NATION STATE CHATTANOOGA!!!" ]; }
-    if (typeof china_mode !== 'undefined') { attack_type = [ "ZOMGOSH CHINA!!!!!!" ]; }
-
     // we maintain a fixed queue of "attacks" via this class
     function FixedQueue( size, initialValues ){
       initialValues = (initialValues || []);
@@ -315,6 +312,8 @@ function about() {
     // we read in a modified file of all country centers
     var centers = [] ;
     d3.tsv("country_centroids_primary.csv", function(data) { centers = data; });
+    d3.csv("samplatlong.csv", function(data) { slatlong = data; });
+    d3.csv("cnlatlong.csv", function(data) { cnlatlong = data; });
 
     // setup structures for the "hits" (arcs)
     // and circle booms
@@ -344,22 +343,15 @@ function about() {
        getData: function() {
 
            var self = this;
-           var src = getRandomCountry(countries, weight);
-
-           // source is always china if china_mode is set
-           // "Hi, Mandiant!!"
-           if (typeof china_mode !== 'undefined') { src = 33; }
-           // source is always Chattanooga if chatt_mode is set
-           // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
-           // change lat/longs in country_centroids_primary.csv for maximum effect!
-           if (typeof chatt_mode !== 'undefined') { src = 176; }
            
-           if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * centers.length)); }
+           if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * slatlong.length)); }
 
-           dst = Math.floor((Math.random() * centers.length));
-           if ((dst == src) || (dst == 33)) {
+           dst = Math.floor((Math.random() * slatlong.length));
+           src = Math.floor((Math.random() * slatlong.length));
+
+           if ((dst == src)) {
             dst = src + 1 ;
-            if (dst > centers.length-1) { dst = centers.length-1 }
+            if (dst > slatlong.length-1) { dst = src - 1 }
            }
 
            if (typeof allfx !== 'undefined') {
@@ -374,14 +366,36 @@ function about() {
            // add hit to the arc queue
            // use strokeColor to set arc line color
 
-           hits.push( { origin : { latitude: +centers[src].LAT, longitude: +centers[src].LONG },
-                        destination : { latitude: +centers[dst].LAT, longitude: +centers[dst].LONG } } );
+           var srclat = slatlong[src].lat;
+           var srclong = slatlong[src].long;
+           var dstlat = slatlong[dst].lat;
+           var dstlong = slatlong[dst].long;
+           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
+           var srccountry = slatlong[src]["country"];
+           // "Hi, Mandiant!!"
+           if (typeof china_mode !== 'undefined') { 
+             srclat = cnlatlong[src].lat;
+             srclong = cnlatlong[src].long;
+             if (cnlatlong[src].country=="chn") { which_attack = "ZOMGOSH CHINA!!!!!!"; }
+             srccountry = cnlatlong[src]["country"];
+           }
+           // source is always Chattanooga if chatt_mode is set
+           // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
+           if (typeof chatt_mode !== 'undefined') {
+             srclat = 35.0456297;
+             srclong = -85.30968;
+             which_attack = "OMG NATION STATE CHATTANOOGA!!!";
+             srccountry = "usa";
+           }
+
+           hits.push( { origin : { latitude: +srclat, longitude: +srclong },
+                        destination : { latitude: +dstlat, longitude: +dstlong } } );
            map.arc(hits, {strokeWidth: 2, strokeColor: 'green'});
 
            // add boom to the bubbles queue
 
-           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
-           boom.push( { radius: 7, latitude: +centers[dst].LAT, longitude: +centers[dst].LONG,
+
+           boom.push( { radius: 7, latitude: +dstlat, longitude: +dstlong,
                         fillOpacity: 0.5, attk: which_attack} );
            map.bubbles(boom, {
                 popupTemplate: function(geo, data) {
@@ -390,9 +404,9 @@ function about() {
             });
 
            // update the scrolling attack div
-           $('#attackdiv').append(centers[src]["SHORT_NAME"] + " (" + randomIP() + ") " +
+           $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " +
-                                  centers[dst]["SHORT_NAME"]+  " (" + randomIP() + ") " +
+                                  slatlong[dst]["country"]+  " (" + randomIP() + ") " +
                                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
