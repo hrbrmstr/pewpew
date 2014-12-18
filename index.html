@@ -209,7 +209,7 @@ function about() {
       attack_max=200;
     }
 
-    if (typeof org_name !== 'undefined') { $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map") }
+    if (typeof org_name !== 'undefined') { $("#titlediv").text(decodeURI(org_name) + " IPew Attack Map").html() }
     
     // we maintain a fixed queue of "attacks" via this class
     function FixedQueue( size, initialValues ){
