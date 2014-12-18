@@ -187,6 +187,7 @@ function about() {
     var org_name = $.getUrlVar('org_name');
     var chatt_mode = $.getUrlVar('chatt_mode');
     var china_mode = $.getUrlVar('china_mode');
+    var dprk_mode = $.getUrlVar('dprk_mode');
     var random_mode = $.getUrlVar('random_mode');
     var tng = $.getUrlVar('tng');
     var wargames = $.getUrlVar('wargames');
@@ -378,6 +379,13 @@ function about() {
              srclong = cnlatlong[src].long;
              if (cnlatlong[src].country=="chn") { which_attack = "ZOMGOSH CHINA!!!!!!"; }
              srccountry = cnlatlong[src]["country"];
+           }
+           // "Hi, Kim Jong!"
+           if (typeof dprk_mode !== 'undefined') {
+             srclat = 39.0194;
+             srclong = 125.7381;
+             which_attack = "ZOMG NORTH KOREAZ!!!";
+             srccountry = "kp";
            }
            // source is always Chattanooga if chatt_mode is set
            // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
