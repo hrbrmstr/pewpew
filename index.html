@@ -188,6 +188,7 @@ function about() {
     var chatt_mode = $.getUrlVar('chatt_mode');
     var china_mode = $.getUrlVar('china_mode');
     var dprk_mode = $.getUrlVar('dprk_mode');
+    var origin = $.getUrlVar('origin');
     var random_mode = $.getUrlVar('random_mode');
     var tng = $.getUrlVar('tng');
     var wargames = $.getUrlVar('wargames');
@@ -209,7 +210,7 @@ function about() {
       attack_max=200;
     }
 
-    if (typeof org_name !== 'undefined') { $("#titlediv").html(decodeURI(org_name) + " IPew Attack Map") }
+    if (typeof org_name !== 'undefined') { $("#titlediv").text(decodeURI(org_name) + " IPew Attack Map").html() }
     
     // we maintain a fixed queue of "attacks" via this class
     function FixedQueue( size, initialValues ){
@@ -381,7 +382,7 @@ function about() {
              srccountry = cnlatlong[src]["country"];
            }
            // "Hi, Kim Jong!"
-           if (typeof dprk_mode !== 'undefined') {
+           else if (typeof dprk_mode !== 'undefined') {
              srclat = 39.0194;
              srclong = 125.7381;
              which_attack = "ZOMG NORTH KOREAZ!!!";
@@ -389,11 +390,27 @@ function about() {
            }
            // source is always Chattanooga if chatt_mode is set
            // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
-           if (typeof chatt_mode !== 'undefined') {
+           else if (typeof chatt_mode !== 'undefined') {
              srclat = 35.0456297;
              srclong = -85.30968;
              which_attack = "OMG NATION STATE CHATTANOOGA!!!";
              srccountry = "usa";
+           }
+
+           // Specify a country
+           else if (typeof origin !== 'undefined') {
+             srccountry = origin.toUpperCase();
+             var center_id = 0;
+             for (i = 0; i < centers.length; i ++) {
+               center_id = i;
+               if (centers[i].FIPS10 === srccountry) {
+                break;
+               }
+             }
+
+             srccountry = origin.toLowerCase();
+             srclat = centers[center_id].LAT;
+             srclong = centers[center_id].LONG;
            }
 
            hits.push( { origin : { latitude: +srclat, longitude: +srclong },
