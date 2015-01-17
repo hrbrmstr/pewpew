@@ -197,6 +197,10 @@ function about() {
     var pew = $.getUrlVar('pew');
     var allfx = $.getUrlVar('allfx')
     var galaga = $.getUrlVar('galaga')
+    var drill_mode = $.getUrlVar("drill_mode")
+    var in_lat = $.getUrlVar("lat")
+    var in_lon = $.getUrlVar("lon")
+
 
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
@@ -282,8 +286,8 @@ function about() {
     //
     // pretty simple setup ->
     // * make base Datamap
-    // setup timers to add random events to a queue
-    // update the Datamap
+    // * setup timers to add random events to a queue
+    // * update the Datamap
 
     var map = new Datamap({
 
@@ -300,7 +304,8 @@ function about() {
           borderWidth: 0.75,
           borderColor: '#4393c3',
           popupTemplate: function(geography, data) {
-            return '<div class="hoverinfo" style="color:white;background:black">' + geography.properties.name + '</div>';
+            return '<div class="hoverinfo" style="color:white;background:black">' + 
+                   geography.properties.name + '</div>';
           },
           popupOnHover: true,
           highlightOnHover: false,
@@ -413,12 +418,17 @@ function about() {
              srclong = centers[center_id].LONG;
            }
 
+           if (typeof drill_mode != 'undefined') {
+
+              dstlat = in_lat
+              dstlong = in_lon
+           }
+
            hits.push( { origin : { latitude: +srclat, longitude: +srclong },
                         destination : { latitude: +dstlat, longitude: +dstlong } } );
            map.arc(hits, {strokeWidth: 2, strokeColor: 'green'});
 
            // add boom to the bubbles queue
-
 
            boom.push( { radius: 7, latitude: +dstlat, longitude: +dstlong,
                         fillOpacity: 0.5, attk: which_attack} );
