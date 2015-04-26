@@ -406,8 +406,10 @@ function about() {
            }
            // blame a former employee
            else if (typeof employee_mode !== 'undefined') {
-             srclat = in_lat;
-             srclong = in_lon;
+             if (typeof in_lat !== 'undefined' && typeof in_lon !== 'undefined') {
+               srclat = in_lat;
+               srclong = in_lon;
+             }
              which_attack = "Former employee attack:" + employee_fname + " " + employee_lname;
              srccountry = "usa";
            }
