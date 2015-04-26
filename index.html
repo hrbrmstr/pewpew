@@ -410,7 +410,10 @@ function about() {
                srclat = in_lat;
                srclong = in_lon;
              }
-             which_attack = "Former employee attack:" + employee_fname + " " + employee_lname;
+             which_attack = "Former employee attack"
+             if (typeof employee_fname !== 'undefined' && typeof employee_lname !== 'undefined') {
+               which_attack += ":" + employee_fname + " " + employee_lname;
+             }
              srccountry = "usa";
            }
 
