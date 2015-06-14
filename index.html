@@ -44,7 +44,7 @@ body {
 }
 
 #about {
-  display: hidden; 
+  display: hidden;
 }
 
 #aboutdiv {
@@ -188,6 +188,9 @@ function about() {
     var chatt_mode = $.getUrlVar('chatt_mode');
     var china_mode = $.getUrlVar('china_mode');
     var dprk_mode = $.getUrlVar('dprk_mode');
+    var employee_mode = $.getUrlVar('employee_mode');
+    var employee_fname = $.getUrlVar('employee_fname');
+    var employee_lname = $.getUrlVar('employee_lname');
     var origin = $.getUrlVar('origin');
     var random_mode = $.getUrlVar('random_mode');
     var tng = $.getUrlVar('tng');
@@ -215,7 +218,7 @@ function about() {
     }
 
     if (typeof org_name !== 'undefined') { $("#titlediv").text(decodeURI(org_name) + " IPew Attack Map").html() }
-    
+
     // we maintain a fixed queue of "attacks" via this class
     function FixedQueue( size, initialValues ){
       initialValues = (initialValues || []);
@@ -256,29 +259,29 @@ function about() {
     var rand = function(min, max) {
         return Math.random() * (max - min) + min;
     };
-     
+
     var getRandomCountry = function(countries, weight) {
 
         var total_weight = weight.reduce(function (prev, cur, i, arr) {
             return prev + cur;
         });
-         
+
         var random_num = rand(0, total_weight);
         var weight_sum = 0;
-         
+
         for (var i = 0; i < countries.length; i++) {
             weight_sum += weight[i];
             weight_sum = +weight_sum.toFixed(2);
-             
+
             if (random_num <= weight_sum) {
                 return countries[i];
             }
         }
-         
+
     };
 
     // need to make this dynamic since it's approximated from sources
-     
+
     var countries = [9,22,29,49,56,58,78,82,102,117,139,176,186] ;
     var weight = [0.000,0.001,0.004,0.008,0.009,0.037,0.181,0.002,0.000,0.415,0.006,0.075,0.088];
 
@@ -304,7 +307,7 @@ function about() {
           borderWidth: 0.75,
           borderColor: '#4393c3',
           popupTemplate: function(geography, data) {
-            return '<div class="hoverinfo" style="color:white;background:black">' + 
+            return '<div class="hoverinfo" style="color:white;background:black">' +
                    geography.properties.name + '</div>';
           },
           popupOnHover: true,
@@ -350,7 +353,7 @@ function about() {
        getData: function() {
 
            var self = this;
-           
+
            if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * slatlong.length)); }
 
            dst = Math.floor((Math.random() * slatlong.length));
@@ -380,7 +383,7 @@ function about() {
            which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
            var srccountry = slatlong[src]["country"];
            // "Hi, Mandiant!!"
-           if (typeof china_mode !== 'undefined') { 
+           if (typeof china_mode !== 'undefined') {
              srclat = cnlatlong[src].lat;
              srclong = cnlatlong[src].long;
              if (cnlatlong[src].country=="chn") { which_attack = "ZOMGOSH CHINA!!!!!!"; }
@@ -399,6 +402,18 @@ function about() {
              srclat = 35.0456297;
              srclong = -85.30968;
              which_attack = "OMG NATION STATE CHATTANOOGA!!!";
+             srccountry = "usa";
+           }
+           // blame a former employee
+           else if (typeof employee_mode !== 'undefined') {
+             if (typeof in_lat !== 'undefined' && typeof in_lon !== 'undefined') {
+               srclat = in_lat;
+               srclong = in_lon;
+             }
+             which_attack = "Former employee attack"
+             if (typeof employee_fname !== 'undefined' && typeof employee_lname !== 'undefined') {
+               which_attack += ":" + employee_fname + " " + employee_lname;
+             }
              srccountry = "usa";
            }
 
@@ -471,7 +486,7 @@ function about() {
 
     </script>
     <!-- Piwik -->
-    <script type="text/javascript"> 
+    <script type="text/javascript">
       var _paq = _paq || [];
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
