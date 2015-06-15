@@ -1,0 +1,9 @@
+{
+  "name": "IPew Attack Map",
+  "description": "Now you can have your very own IP attack map that's just as useful as everyone else's.",
+  "repository": "https://github.com/hrbrmstr/pewpew.git",
+  "env": {
+    "BUILDPACK_URL": "https://github.com/pearkes/heroku-buildpack-static"
+  },
+  "keywords": ["security", "map", "pew"]
+}
