@@ -156,7 +156,8 @@ function about() {
     // add/change the attack types here
     attack_type = [ "any port scan in a storm", "ssh brutish force", "Thought Leader Tweet",
                     "SYN FLOOD BA-BY", "Spotty", "Heartbleed Hotel", "Po_ODLE", "Sharknado",
-                    "CORGI Attack", "Ping of DOOM", "Conficker", "Goldfinger", "SANDPAPER" ] ;
+                    "CORGI Attack", "Ping of DOOM", "Conficker", "Goldfinger", "SANDPAPER",
+                    "SNAILshock", "Spaghetti RAT", "Driduplex" ] ;
 
     // gotta add types here if you add more sounds (or delete them)
 
@@ -203,7 +204,9 @@ function about() {
     var drill_mode = $.getUrlVar("drill_mode")
     var in_lat = $.getUrlVar("lat")
     var in_lon = $.getUrlVar("lon")
-
+    var destination = $.getUrlVar("destination")
+    var greenattacks = $.getUrlVar("greenattacks")
+    var redattacks = $.getUrlVar("redattacks")
 
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
@@ -335,6 +338,8 @@ function about() {
     function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
     function getOctet() {return Math.round(Math.random()*255);}
     function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); }
+    function getStroke() {return Math.round(Math.random()*100);}
+    function getDestination() {return Math.round(Math.random()*100);}
 
     // doing this a bit fancy for a hack, but it makes it
     // easier to group code functions together and have variables
@@ -432,6 +437,42 @@ function about() {
              srclat = centers[center_id].LAT;
              srclong = centers[center_id].LONG;
            }
+           
+           // Specify a destination country
+           if (typeof destination !== 'undefined' && getDestination() < 80) {
+             dstcountry = destination.toUpperCase();
+             var center_id = 0;
+             for (i = 0; i < centers.length; i ++) {
+               center_id = i;
+               if (centers[i].FIPS10 === dstcountry) {
+                break;
+               }
+             }
+
+             dstcountry = destination.toLowerCase();
+             attackdiv_slatlong = dstcountry;
+             dstlat = centers[center_id].LAT;
+             dstlong = centers[center_id].LONG;
+           }
+           else {
+            attackdiv_slatlong = slatlong[dst]["country"];
+           }
+
+           // Specify attack color
+           if (typeof greenattacks !== 'undefined') {
+             strokeColor = 'green';
+           }
+           else if (typeof redattacks !== 'undefined') {
+             strokeColor = 'red';
+           }
+           else {
+             if (getStroke() < 70) {
+               strokeColor = 'green';
+             }
+             else {
+               strokeColor = 'red';
+             }
+           }
 
            if (typeof drill_mode != 'undefined') {
 
@@ -441,7 +482,7 @@ function about() {
 
            hits.push( { origin : { latitude: +srclat, longitude: +srclong },
                         destination : { latitude: +dstlat, longitude: +dstlong } } );
-           map.arc(hits, {strokeWidth: 2, strokeColor: 'green'});
+           map.arc(hits, {strokeWidth: 2, strokeColor: strokeColor});
 
            // add boom to the bubbles queue
 
@@ -456,7 +497,7 @@ function about() {
            // update the scrolling attack div
            $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " +
-                                  slatlong[dst]["country"]+  " (" + randomIP() + ") " +
+                                  attackdiv_slatlong+  " (" + randomIP() + ") " +
                                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
                                   "<br/>");
            $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
