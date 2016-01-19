@@ -9,7 +9,7 @@
   "repository": "https://github.com/datapsi/pewpew.git",
   "buildpacks": [
     {
-      "url": "https://github.com/pearkes/heroku-buildpack-static"
+      "url": "https://github.com/heroku/heroku-buildpack-php"
     }
   ]
 }
