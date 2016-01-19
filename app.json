@@ -1,17 +1,16 @@
 {
   "name": "IPew Attack Map",
-  "description": "Now you can have your very own IP attack map that's just as useful as everyone else's.",
+  "description": "Now you can have your very own IP attack map",
+  "keywords": [
+    "security",
+    "map",
+    "pew"
+  ],
   "repository": "https://github.com/datapsi/pewpew.git",
-  
-  "keywords": ["security", "map", "pew"]
-  
   "buildpacks": [
     {
       "url": "https://github.com/pearkes/heroku-buildpack-static"
     }
   ]
-  
 }
-
-
 
