@@ -52,6 +52,10 @@ employee_mode. You can set a first and last name for the employee and also
 set a latitude and longitude.
 [http://ocularwarfare.com/ipew/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617](http://ocularwarfare.com/ipew/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617)
 
+### No activity
+
+Just use `norse_mode=1` as a parameter
+
 ### Using IPew
 
 Feel free to use the hosted version, but we've released IPew under a liberal Creative Commons license, so clone away and use as you see fit, just remember to share your creations (and code) with others.

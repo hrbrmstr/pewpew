@@ -184,6 +184,7 @@ function about() {
     // here's where we deal with parameters
     // try to grab them, see if they exist, make changes to defaults if they do
 
+    var norse_mode = $.getUrlVar('norse_mode');
     var bad_day = $.getUrlVar('bad_day');
     var org_name = $.getUrlVar('org_name');
     var chatt_mode = $.getUrlVar('chatt_mode');
@@ -358,6 +359,8 @@ function about() {
        getData: function() {
 
            var self = this;
+
+           if (typeof norse_mode !== 'undefined') { return; }
 
            if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * slatlong.length)); }
 
