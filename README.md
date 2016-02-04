@@ -32,7 +32,7 @@ To turn off sound effects (but, but, _why?_ :-), use `nofx=1`, and to randomly c
 
 By default, IPew will use a statistical model for choosing source countries for the attacks, but you can level the playing field and set `random_mode=1` to give all countries the same cyber-advatage.
 
-In similar vein, and using the perpsective many prominent security vendors and pundits seem to have, you can make all cyber attacks from from China with `china_mode=1` or from North Korea with `dprk_mode=1`.
+In similar vein, and using the perpsective many prominent security vendors and pundits seem to have, you can make all cyber attacks come from China with `china_mode=1` or from North Korea with `dprk_mode=1`.
 
 
 IPew's default attack timing is based on observational data from many sources, but you can make it look like the world is on the brink of cyber collapse by setting `bad_day=1`.
