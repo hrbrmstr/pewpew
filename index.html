@@ -120,6 +120,7 @@ function about() {
   <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
   <audio id="pew" src="pew.mp3" preload="auto"></audio>
   <audio id="galaga" src="shot_sound.mp3" preload="auto"></audio>
+  <audio id="asteroids" src="asteroids.mp3" preload="auto"></audio>
 
   <center><div id="container1"></div></center>
   <div id="titlediv">IPew Attack Map</div>
@@ -161,7 +162,7 @@ function about() {
 
     // gotta add types here if you add more sounds (or delete them)
 
-    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga" ]
+    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga", "asteroids" ]
 
     // need this to more easily grab URI query parameters
     $.extend({
@@ -202,6 +203,7 @@ function about() {
     var pew = $.getUrlVar('pew');
     var allfx = $.getUrlVar('allfx')
     var galaga = $.getUrlVar('galaga')
+    var asteroids = $.getUrlVar('asteroids')
     var drill_mode = $.getUrlVar("drill_mode")
     var in_lat = $.getUrlVar("lat")
     var in_lon = $.getUrlVar("lon")
@@ -215,6 +217,7 @@ function about() {
     if (typeof wargames !== 'undefined') { snd_id = "wargames" ; }
     if (typeof pew !== 'undefined') { snd_id = "pew" ; }
     if (typeof galaga !== 'undefined') { snd_id = "galaga" ; }
+    if (typeof asteroids !== 'undefined') { snd_id = "asteroids" ; }
 
     if (typeof bad_day !== 'undefined') {
       attack_min=200;

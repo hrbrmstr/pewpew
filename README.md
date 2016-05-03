@@ -27,6 +27,7 @@ IPew includes the following sounds:
 - `b5=1` - Babylon 5 defense grid cannons!
 - `pew=1` - Somewhat disturbing human-made "pew-pew" sound
 - `galaga=1` - Classic arcade sound!
+- `asteroids=1` - ASTEROIDS!
 
 To turn off sound effects (but, but, _why?_ :-), use `nofx=1`, and to randomly cycle through them all use `allfx=1`
 
