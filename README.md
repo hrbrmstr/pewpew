@@ -28,6 +28,7 @@ IPew includes the following sounds:
 - `pew=1` - Somewhat disturbing human-made "pew-pew" sound
 - `galaga=1` - Classic arcade sound!
 - `asteroids=1` - ASTEROIDS!
+- `china=1` - Trump saying "China!"
 
 To turn off sound effects (but, but, _why?_ :-), use `nofx=1`, and to randomly cycle through them all use `allfx=1`
 
