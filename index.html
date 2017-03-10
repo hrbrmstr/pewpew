@@ -122,6 +122,7 @@ function about() {
   <audio id="galaga" src="shot_sound.mp3" preload="auto"></audio>
   <audio id="asteroids" src="asteroids.mp3" preload="auto"></audio>
   <audio id="china" src="china.mp3" preload="auto"></audio>
+  <audio id="timallen" src="timallen.wav" preload="auto"></audio>
 
   <center><div id="container1"></div></center>
   <div id="titlediv">IPew Attack Map</div>
@@ -163,7 +164,7 @@ function about() {
 
     // gotta add types here if you add more sounds (or delete them)
 
-    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga", "asteroids", "china" ]
+    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga", "asteroids", "china", "timallen" ]
 
     // need this to more easily grab URI query parameters
     $.extend({
@@ -183,7 +184,7 @@ function about() {
       }
     });
 
-    // here's where we deal with parameters
+    // here is where we deal with parameters
     // try to grab them, see if they exist, make changes to defaults if they do
 
     var norse_mode = $.getUrlVar('norse_mode');
@@ -206,6 +207,7 @@ function about() {
     var galaga = $.getUrlVar('galaga')
     var asteroids = $.getUrlVar('asteroids')
     var china = $.getUrlVar('china')
+    var timallen = $.getUrlVar('timallen')
     var drill_mode = $.getUrlVar("drill_mode")
     var in_lat = $.getUrlVar("lat")
     var in_lon = $.getUrlVar("lon")
@@ -221,6 +223,7 @@ function about() {
     if (typeof galaga !== 'undefined') { snd_id = "galaga" ; }
     if (typeof asteroids !== 'undefined') { snd_id = "asteroids" ; }
     if (typeof china !== 'undefined') { snd_id = "china" ; }
+    if (typeof timallen !== 'undefined') { snd_id = "timallen" ; }
 
     if (typeof bad_day !== 'undefined') {
       attack_min=200;
@@ -290,7 +293,7 @@ function about() {
 
     };
 
-    // need to make this dynamic since it's approximated from sources
+    // need to make this dynamic since it is approximated from sources
 
     var countries = [9,22,29,49,56,58,78,82,102,117,139,176,186] ;
     var weight = [0.000,0.001,0.004,0.008,0.009,0.037,0.181,0.002,0.000,0.415,0.006,0.075,0.088];
