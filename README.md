@@ -44,16 +44,16 @@ Finally, you can proudly display your organization's name by setting `org_name=M
 
 ### Drill Mode
 
-We had an interesting request to be able to use IPew in a IR "drill" setting, so there's now a "drill mode" where you can specify a latitude &amp; longitude to be the destination for the attacks. Right now, all attacks go there, but we may add an option to specify a percentage of attacks that should go there. You _must_ use `drill_mode=1&lat=##.####&lon=##.####` for this to work, like: `drill_mode=1&lat=43.2672&lon=-70.8617` (which would focus all attacks near @hrbrmstr). Remember, you can specify your organization name there, too. [Here's an example](http://ocularwarfare.com/ipew/index.html?org_name=hrbrmstr&drill_mode=1&lat=43.2672&lon=-70.8617).
+We had an interesting request to be able to use IPew in a IR "drill" setting, so there's now a "drill mode" where you can specify a latitude &amp; longitude to be the destination for the attacks. Right now, all attacks go there, but we may add an option to specify a percentage of attacks that should go there. You _must_ use `drill_mode=1&lat=##.####&lon=##.####` for this to work, like: `drill_mode=1&lat=43.2672&lon=-70.8617` (which would focus all attacks near @hrbrmstr). Remember, you can specify your organization name there, too. [Here's an example](http://ocularwarfare.com/index.html?org_name=hrbrmstr&drill_mode=1&lat=43.2672&lon=-70.8617).
 
-One of my personal favorites is [http://ocularwarfare.com/ipew/index.html?china_mode=1&org_name=Mandiant&bad_day=1](http://ocularwarfare.com/ipew/index.html?china_mode=1&org_name=Mandiant&bad_day=1).
+One of my personal favorites is [http://ocularwarfare.com/index.html?china_mode=1&org_name=Mandiant&bad_day=1](http://ocularwarfare.com/index.html?china_mode=1&org_name=Mandiant&bad_day=1).
 
 ### Blame former employee mode
 
 If you want to show that former employees are the problem, try out
 employee_mode. You can set a first and last name for the employee and also
 set a latitude and longitude.
-[http://ocularwarfare.com/ipew/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617](http://ocularwarfare.com/ipew/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617)
+[http://ocularwarfare.com/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617](http://ocularwarfare.com/index.html?org_name=Verizon&employee_mode=1&employee_fname=Kevin&employee_lname=Thompson&lat=43.2672&lon=-70.8617)
 
 ### No activity
 
