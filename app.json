@@ -6,7 +6,7 @@
     "map",
     "pew"
   ],
-  "repository": "https://github.com/datapsi/pewpew.git",
+  "repository": "https://github.com/hydrosquall/pewpew.git",
   "buildpacks": [
     {
       "url": "https://github.com/heroku/heroku-buildpack-php"
