@@ -1,0 +1,17 @@
+If you want to demo this in an isolated environment or you want to run this on a disconnected network (such as for an exercise or drill in your tabletop / premortem command center), you can build a docker container that includes a minimal HTTP server and the full pewpew setup before you go offline, and run the docker container to present the solution. This is a Q&D solution for those who don't want to mess with getting on a web-host or messing with Heroku or other code-host services. 
+
+To build the docker image, run the command:
+	sudo docker build -t "pewpew" .
+
+This will use the included Dockerfile to create an image called "pewpew", which has a minimal linux, node js, http-server, and the full pewpew folder (which will be installed into /opt/pewpew). Node js was selected for the http-server because we are already using javascript for pewpew, so might as well not add a second language if not needed. 
+
+To run the docker image, execute the following:
+	sudo docker run -it "pewpew"
+
+This will run the node js http-server daemon, running in port 8080, serving-up the contents of /opt/pewpew. 
+
+To access it, go to a web-browser that can access the IP of the system running the docker image and navigate to the appropriate URL. For example, in my laptop, to show a concerted attack on hrbrmstr's location, I navigated to:
+
+	http://172.17.0.2:8080?drill_mode=1&lat=43.2672&lon=-70.8617&nofx=1
+
+
