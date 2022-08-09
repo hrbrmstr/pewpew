@@ -214,6 +214,10 @@ function about() {
     var greenattacks = $.getUrlVar("greenattacks")
     var redattacks = $.getUrlVar("redattacks")
 
+    // mm - process real firewall logs
+    var firewall_log = $.getUrlVar('firewall_log')
+
+
     snd_id = "starwars" ;
     if (typeof tng !== 'undefined') { snd_id = "tng" ; }
     if (typeof b5 !== 'undefined') { snd_id = "b5" ; }
@@ -330,6 +334,14 @@ function about() {
         },
 
       })
+
+    // mm
+    if (typeof firewall_log !== 'undefined') {
+       //
+    }
+    var firewall_data = [] ;
+    d3.csv("pewpew.csv", function(data) { firewall_data = data; });
+    var firewall_index = 0;
 
     // we read in a modified file of all country centers
     var centers = [] ;
@@ -448,7 +460,7 @@ function about() {
              srclat = centers[center_id].LAT;
              srclong = centers[center_id].LONG;
            }
-           
+
            // Specify a destination country
            if (typeof destination !== 'undefined' && getDestination() < 80) {
              dstcountry = destination.toUpperCase();
@@ -491,6 +503,29 @@ function about() {
               dstlong = in_lon
            }
 
+           // mm - proc firewall_logs
+           if (typeof firewall_log != 'undefined') {
+             // Put your location here
+             dstlat = -33.86
+             dstlong = 151.08
+             // Increment the counter, wrap around if we reach the end
+             if (( firewall_index += 1 ) > firewall_data.length ) firewall_index = 0
+             // Read source from the firewall log
+             var srclat = firewall_data[firewall_index].lat;
+             var srclong = firewall_data[firewall_index].lon;
+             // Color based on allow/deny
+             if ( firewall_data[firewall_index].action == "allowed") { strokeColor = 'green'; desc = "connects to"}
+             if ( firewall_data[firewall_index].action == "blocked") { strokeColor = 'red'; desc = "attacks" }
+             if ( firewall_data[firewall_index].action == "teardown") { strokeColor = 'blue'; desc = "disconnects from"}
+             // Source address
+             srcAddress = firewall_data[firewall_index].src;
+             srccountry = firewall_data[firewall_index].Country;
+             dstAddress = "166.64.x.x";
+             dstcountry = "NSWPF OuterGuard";
+             which_attack = firewall_data[firewall_index].action;
+           }
+
+
            hits.push( { origin : { latitude: +srclat, longitude: +srclong },
                         destination : { latitude: +dstlat, longitude: +dstlong } } );
            map.arc(hits, {strokeWidth: 2, strokeColor: strokeColor});
@@ -505,13 +540,26 @@ function about() {
                 }
             });
 
+           if (typeof firewall_log != 'undefined') {
+
+
+             $('#attackdiv').append(srccountry + " (" + srcAddress + ") " +
+                                    " <span style='color:"+strokeColor+"'>"+desc+"</span> " +
+                                    dstcountry+  " (" + dstAddress + ") " +
+                                    " <span style='color:steelblue'>(" + which_attack + ")</span> " +
+                                    "<br/>");
+             $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
+           } else {
+              // Put your location here
            // update the scrolling attack div
-           $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
+             $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
                                   " <span style='color:red'>attacks</span> " +
                                   attackdiv_slatlong+  " (" + randomIP() + ") " +
                                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
                                   "<br/>");
-           $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
+             $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
+           }
+
 
            // pick a new random time and start the timer again!
            this.interval = getRandomInt(attack_min, attack_max);
@@ -527,6 +575,6 @@ function about() {
     d3.select(window).on('resize', function() { location.reload(); });
 
 </script>
-   
+
 </body>
 </html>
