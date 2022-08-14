@@ -26,8 +26,8 @@ body {
   font-family: monospace;
   font-size:10px;
   position:fixed;
-  width:50%;
-  height:100px;
+  width:27%;
+  height:250px;
   color:white;
   background-color:black;
   padding:5px;
@@ -40,7 +40,8 @@ body {
   width: 100vw;
   height: 100vh;
   max-width:100%;
-  max-height:100%
+  max-height:100%;
+  aspectRatio:0.5;
 }
 
 #about {
@@ -124,8 +125,8 @@ function about() {
   <audio id="china" src="china.mp3" preload="auto"></audio>
   <audio id="timallen" src="timallen.wav" preload="auto"></audio>
 
-  <center><div id="container1"></div></center>
-  <div id="titlediv">IPew Attack Map</div>
+  <center><div id="container1" ></div></center>
+  <div id="titlediv">IP Attack Map</div>
   <div id="attackdiv"></div>
   <div id="aboutdiv"><i class="fa fa-question-circle fa-2x" onClick="about();"></i></div>
 
@@ -312,16 +313,20 @@ function about() {
 
         scope: 'world',
         element: document.getElementById('container1'),
-        projection: 'winkel3',
+        //projection: 'winkel3',
+        projection: 'mercator',
+
         // change the projection to something else only if you have absolutely no cartographic sense
 
-        fills: { defaultFill: 'black', },
+        //fills: { defaultFill: 'black', },
+        fills: { defaultFill: '#101040', },
 
         geographyConfig: {
           dataUrl: null,
           hideAntarctica: true,
           borderWidth: 0.75,
-          borderColor: '#4393c3',
+          //borderColor: '#4393c3',
+          borderColor: '#00BFFF',
           popupTemplate: function(geography, data) {
             return '<div class="hoverinfo" style="color:white;background:black">' +
                    geography.properties.name + '</div>';
@@ -514,14 +519,14 @@ function about() {
              var srclat = firewall_data[firewall_index].lat;
              var srclong = firewall_data[firewall_index].lon;
              // Color based on allow/deny
-             if ( firewall_data[firewall_index].action == "allowed") { strokeColor = 'green'; desc = "connects to"}
+             if ( firewall_data[firewall_index].action == "allowed") { strokeColor = 'green'; desc = "connect"}
              if ( firewall_data[firewall_index].action == "blocked") { strokeColor = 'red'; desc = "attacks" }
-             if ( firewall_data[firewall_index].action == "teardown") { strokeColor = 'blue'; desc = "disconnects from"}
+             if ( firewall_data[firewall_index].action == "teardown") { strokeColor = 'blue'; desc = "disconnect"}
              // Source address
              srcAddress = firewall_data[firewall_index].src;
              srccountry = firewall_data[firewall_index].Country;
              dstAddress = "166.64.x.x";
-             dstcountry = "NSWPF OuterGuard";
+             dstcountry = "NSWPF";
              which_attack = firewall_data[firewall_index].action;
            }
 
