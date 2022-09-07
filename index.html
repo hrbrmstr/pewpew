@@ -448,7 +448,7 @@ function about() {
              srclat = centers[center_id].LAT;
              srclong = centers[center_id].LONG;
            }
-           
+
            // Specify a destination country
            if (typeof destination !== 'undefined' && getDestination() < 80) {
              dstcountry = destination.toUpperCase();
@@ -491,28 +491,35 @@ function about() {
               dstlong = in_lon
            }
 
-           hits.push( { origin : { latitude: +srclat, longitude: +srclong },
-                        destination : { latitude: +dstlat, longitude: +dstlong } } );
-           map.arc(hits, {strokeWidth: 2, strokeColor: strokeColor});
+           //only attempt to queue draws if the page is not hidden;
+           //trying to draw while the page is hidden causes the JS heap to balloon rapidly
+           if(!document.hidden) {
+               hits.push({
+                   origin: {latitude: +srclat, longitude: +srclong},
+                   destination: {latitude: +dstlat, longitude: +dstlong}
+               });
+               map.arc(hits, {strokeWidth: 2, strokeColor: strokeColor});
 
-           // add boom to the bubbles queue
+               // add boom to the bubbles queue
 
-           boom.push( { radius: 7, latitude: +dstlat, longitude: +dstlong,
-                        fillOpacity: 0.5, attk: which_attack} );
-           map.bubbles(boom, {
-                popupTemplate: function(geo, data) {
-                  return '<div class="hoverinfo">' + data.attk + '</div>';
-                }
-            });
+               boom.push({
+                   radius: 7, latitude: +dstlat, longitude: +dstlong,
+                   fillOpacity: 0.5, attk: which_attack
+               });
+               map.bubbles(boom, {
+                   popupTemplate: function (geo, data) {
+                       return '<div class="hoverinfo">' + data.attk + '</div>';
+                   }
+               });
 
-           // update the scrolling attack div
-           $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
-                                  " <span style='color:red'>attacks</span> " +
-                                  attackdiv_slatlong+  " (" + randomIP() + ") " +
-                                  " <span style='color:steelblue'>(" + which_attack + ")</span> " +
-                                  "<br/>");
-           $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
-
+               // update the scrolling attack div
+               $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
+                   " <span style='color:red'>attacks</span> " +
+                   attackdiv_slatlong + " (" + randomIP() + ") " +
+                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
+                   "<br/>");
+               $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
+           }
            // pick a new random time and start the timer again!
            this.interval = getRandomInt(attack_min, attack_max);
            this.init() ;
@@ -527,6 +534,6 @@ function about() {
     d3.select(window).on('resize', function() { location.reload(); });
 
 </script>
-   
+
 </body>
 </html>
