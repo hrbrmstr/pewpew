@@ -1,539 +1,892 @@
-<!DOCTYPE html>
-<head>
-<meta charset="utf-8">
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  background: black;
-}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IPew Attack Map</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-#titlediv {
-  font-family: monospace;
-  text-align: center;
-  font-size:48px;
-  position:fixed;
-  width:100%;
-  height:50px;
-  color:white;
-  background-color:black;
-  padding:5px;
-  top:0px;
-  overflow-y: auto;
-}
-
-#attackdiv {
-  font-family: monospace;
-  font-size:10px;
-  position:fixed;
-  width:50%;
-  height:100px;
-  color:white;
-  background-color:black;
-  padding:5px;
-  bottom:0px;
-  overflow-y: auto;
-}
-
-#container1 {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  max-width:100%;
-  max-height:100%
-}
-
-#about {
-  display: hidden;
-}
-
-#aboutdiv {
-  text-align:right;
-  width:100px;
-  height:100px;
-  top:0px;
-  right:0px;
-  position:fixed;
-  padding:10px;
-  color: white;
-}
-
-#ccdiv {
-  text-align:right;
-  width:100px;
-  height:20px;
-  bottom:0px;
-  right:0px;
-  position:fixed;
-  padding:5px;
-  color: white;
-}
-
-#about {display:none;}
-
-/* Overlay */
-#simplemodal-overlay {background-color:#000;}
-
-/* Container */
-#simplemodal-container {height:460px; width:600px; color:#bbb; background-color:#333; border:4px solid #444; padding:12px;}
-#simplemodal-container .simplemodal-data {padding:8px;}
-#simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
-#simplemodal-container a {color:#ddd;}
-#simplemodal-container a.modalCloseImg {background:url(../img/basic/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-15px; right:-16px; cursor:pointer;}
-#simplemodal-container h3 {color:#84b8d9;}
-#simplemodal-container a.modalCloseImg {
-  background:url(x.png) no-repeat; /* adjust url as required */
-  width:25px;
-  height:29px;
-  display:inline;
-  z-index:3200;
-  position:absolute;
-  top:-15px;
-  right:-18px;
-  cursor:pointer;
-}
-
-</style>
-
-<script src="https://d3js.org/d3.v3.min.js"></script>
-<script src="https://d3js.org/d3.geo.projection.v0.min.js"></script>
-<script src="https://d3js.org/topojson.v1.min.js"></script>
-<script src="https://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="jquery.simplemodal-1.4.4.js"></script>
-
-<script>
-function about() {
-  $("#about").modal();
-}
-</script>
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-
-</head>
-
-<body>
-
-  <audio id="starwars" src="Blaster-Solo.wav" preload="auto"></audio>
-  <audio id="tng" src="tng_torpedo_clean.mp3" preload="auto"></audio>
-  <audio id="b5" src="B5-interceptor1.wav" preload="auto"></audio>
-  <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
-  <audio id="pew" src="pew.mp3" preload="auto"></audio>
-  <audio id="galaga" src="shot_sound.mp3" preload="auto"></audio>
-  <audio id="asteroids" src="asteroids.mp3" preload="auto"></audio>
-  <audio id="china" src="china.mp3" preload="auto"></audio>
-  <audio id="timallen" src="timallen.wav" preload="auto"></audio>
-
-  <center><div id="container1"></div></center>
-  <div id="titlediv">IPew Attack Map</div>
-  <div id="attackdiv"></div>
-  <div id="aboutdiv"><i class="fa fa-question-circle fa-2x" onClick="about();"></i></div>
-
-  <div id="ccdiv">
-  <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" /></a>
-  </div>
-
-  <div id="about">
-  <h3>About IPew</h3>
-  Attack maps are the <span style="font-family: monospace;">&lt;blink&gt;</span> tag of information security. They are pure eye candy, meant to scare the general public and <i>WOW</i> unsuspecting executives visiting Security Operations Centers. Yet, security vendors keep cranking them out. We didn't want organizations without "real" data or l33t animation skills to to feel left out, so we built this map for anyone to use [CC BY-SA]. Plus, they're all missing sound effects! And, most (all, really) use mind-numbingly dumb map projections, begging the question: <i>"Does Greenland make my map look big?"</i>.<br/>
-  <br/>
-  The default map uses a statistical model (infrequently updated) for source "attack" node country of origin &amp; frequency while destinations are fully randomized. The default sound is a Star Wars "blaster" (guess which one!). Sounds can be customized and an organization name can be specified, plus there are a few other <i>interesting</i> options.<br/>
-  <br/>
-  Check out the <a target=_blank href='http://github.com/hrbrmstr/pewpew'>github repository</a> for more information and instructions on how to customize the map options for maximum effect.<br/>
-  <br/>
-  Brought to you by <a target=_blank href="http://twitter.com/alexcpsec">@alexcpsec</a>, <a target=_blank href="http://twitter.com/hrbrmstr">@hrbrmstr</a> &amp; <a target=_blank href="https://datadrivensecurity.info/blog/pages/resources.html">Data Driven Security</a>
-  </div>
-
-  <!-- Use Hash-Bang to maintain scroll position when closing modal -->
-  <a href="#!" class="modal-close" title="Close this modal"
-      data-dismiss="modal" data-close="Close">&times;</a>
-
-
-  <script>
-
-    // setup default min/max timer range for random draw
-    attack_min = 100 ;
-    attack_max = 2000 ;
-
-    // add/change the attack types here
-    attack_type = [ "any port scan in a storm", "ssh brutish force", "Thought Leader Tweet",
-                    "SYN FLOOD BA-BY", "Spotty", "Heartbleed Hotel", "Po_ODLE", "Sharknado",
-                    "CORGI Attack", "Ping of DOOM", "Conficker", "Goldfinger", "SANDPAPER",
-                    "SNAILshock", "Spaghetti RAT", "Driduplex" ] ;
-
-    // gotta add types here if you add more sounds (or delete them)
-
-    audio_type = [ "starwars", "tng", "b5", "wargames", "pew", "galaga", "asteroids", "china", "timallen" ]
-
-    // need this to more easily grab URI query parameters
-    $.extend({
-      getUrlVars: function(){
-        var vars = [], hash;
-        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-        for(var i = 0; i < hashes.length; i++)
-        {
-          hash = hashes[i].split('=');
-          vars.push(hash[0]);
-          vars[hash[0]] = hash[1];
-        }
-        return vars;
-      },
-      getUrlVar: function(name){
-        return $.getUrlVars()[name];
+      * {
+        box-sizing: border-box;
       }
-    });
 
-    // here is where we deal with parameters
-    // try to grab them, see if they exist, make changes to defaults if they do
+      :root {
+        --bg-primary: #0a0a0f;
+        --bg-secondary: #1a1a2e;
+        --bg-tertiary: #16213e;
+        --accent-primary: #00d4ff;
+        --accent-secondary: #ff6b6b;
+        --accent-success: #51cf66;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --text-muted: #6c757d;
+        --border-color: #2d3748;
+        --shadow-dark: rgba(0, 0, 0, 0.5);
+        --shadow-glow: rgba(0, 212, 255, 0.3);
+        --gradient-cyber: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-neon: linear-gradient(135deg, #00d4ff 0%, #ff6b6b 100%);
+      }
 
-    var norse_mode = $.getUrlVar('norse_mode');
-    var bad_day = $.getUrlVar('bad_day');
-    var org_name = $.getUrlVar('org_name');
-    var chatt_mode = $.getUrlVar('chatt_mode');
-    var china_mode = $.getUrlVar('china_mode');
-    var dprk_mode = $.getUrlVar('dprk_mode');
-    var employee_mode = $.getUrlVar('employee_mode');
-    var employee_fname = $.getUrlVar('employee_fname');
-    var employee_lname = $.getUrlVar('employee_lname');
-    var origin = $.getUrlVar('origin');
-    var random_mode = $.getUrlVar('random_mode');
-    var tng = $.getUrlVar('tng');
-    var wargames = $.getUrlVar('wargames');
-    var b5 = $.getUrlVar('b5');
-    var nofx = $.getUrlVar('nofx');
-    var pew = $.getUrlVar('pew');
-    var allfx = $.getUrlVar('allfx')
-    var galaga = $.getUrlVar('galaga')
-    var asteroids = $.getUrlVar('asteroids')
-    var china = $.getUrlVar('china')
-    var timallen = $.getUrlVar('timallen')
-    var drill_mode = $.getUrlVar("drill_mode")
-    var in_lat = $.getUrlVar("lat")
-    var in_lon = $.getUrlVar("lon")
-    var destination = $.getUrlVar("destination")
-    var greenattacks = $.getUrlVar("greenattacks")
-    var redattacks = $.getUrlVar("redattacks")
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-primary);
+        background-image:
+          radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(81, 207, 102, 0.1) 0%, transparent 50%);
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        overflow: hidden;
+        position: relative;
+      }
 
-    snd_id = "starwars" ;
-    if (typeof tng !== 'undefined') { snd_id = "tng" ; }
-    if (typeof b5 !== 'undefined') { snd_id = "b5" ; }
-    if (typeof wargames !== 'undefined') { snd_id = "wargames" ; }
-    if (typeof pew !== 'undefined') { snd_id = "pew" ; }
-    if (typeof galaga !== 'undefined') { snd_id = "galaga" ; }
-    if (typeof asteroids !== 'undefined') { snd_id = "asteroids" ; }
-    if (typeof china !== 'undefined') { snd_id = "china" ; }
-    if (typeof timallen !== 'undefined') { snd_id = "timallen" ; }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(90deg, transparent 79px, rgba(0, 212, 255, 0.03) 81px, transparent 82px),
+          linear-gradient(transparent 79px, rgba(0, 212, 255, 0.03) 81px, transparent 82px);
+        background-size: 82px 82px;
+        pointer-events: none;
+        z-index: 1;
+      }
 
-    if (typeof bad_day !== 'undefined') {
-      attack_min=200;
-      attack_max=200;
-    }
+      #container1 {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        max-width: 100%;
+        max-height: 100%;
+        z-index: 2;
+      }
 
-    if (typeof org_name !== 'undefined') { $("#titlediv").text(decodeURI(org_name) + " IPew Attack Map").html() }
+      #titlediv {
+        font-family: "JetBrains Mono", monospace;
+        text-align: center;
+        font-size: clamp(24px, 4vw, 48px);
+        font-weight: 700;
+        position: fixed;
+        width: 100%;
+        height: auto;
+        color: var(--text-primary);
+        background: rgba(10, 10, 15, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px;
+        top: 0;
+        z-index: 1000;
+        letter-spacing: 2px;
+        text-shadow: 0 0 20px var(--shadow-glow);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+      }
 
-    // we maintain a fixed queue of "attacks" via this class
-    function FixedQueue( size, initialValues ){
-      initialValues = (initialValues || []);
-      var queue = Array.apply( null, initialValues );
-      queue.fixedSize = size;
-      queue.push = FixedQueue.push;
-      queue.splice = FixedQueue.splice;
-      queue.unshift = FixedQueue.unshift;
-      FixedQueue.trimTail.call( queue );
-      return( queue );
-    }
+      #titlediv::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background: var(--gradient-neon);
+        border-radius: 2px;
+      }
 
-    FixedQueue.trimHead = function(){
-      if (this.length <= this.fixedSize){ return; }
-      Array.prototype.splice.call( this, 0, (this.length - this.fixedSize) );
-    };
+      #attackdiv {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        line-height: 1.6;
+        position: fixed;
+        width: min(50%, 800px);
+        max-height: 200px;
+        color: var(--text-primary);
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        bottom: 20px;
+        left: 20px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 8px 32px var(--shadow-dark);
+        transition: all 0.3s ease;
+      }
 
-    FixedQueue.trimTail = function(){
-      if (this.length <= this.fixedSize) { return; }
-      Array.prototype.splice.call( this, this.fixedSize, (this.length - this.fixedSize)
-      );
-    };
+      #attackdiv:hover {
+        border-color: var(--accent-primary);
+        box-shadow:
+          0 8px 32px var(--shadow-dark),
+          0 0 20px var(--shadow-glow);
+      }
 
-    FixedQueue.wrapMethod = function( methodName, trimMethod ){
-      var wrapper = function(){
-        var method = Array.prototype[ methodName ];
-        var result = method.apply( this, arguments );
-        trimMethod.call( this );
-        return( result );
+      #attackdiv::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #attackdiv::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 3px;
+      }
+
+      #attackdiv::-webkit-scrollbar-thumb {
+        background: var(--accent-primary);
+        border-radius: 3px;
+      }
+
+      #attackdiv::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-secondary);
+      }
+
+      #aboutdiv {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        z-index: 1000;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        color: var(--accent-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+      }
+
+      #aboutdiv:hover {
+        background: rgba(0, 212, 255, 0.1);
+        border-color: var(--accent-primary);
+        box-shadow:
+          0 4px 20px var(--shadow-dark),
+          0 0 20px var(--shadow-glow);
+        transform: scale(1.1);
+      }
+
+      #ccdiv {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 15px;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+        transition: all 0.3s ease;
+      }
+
+      #ccdiv:hover {
+        border-color: var(--accent-primary);
+        box-shadow:
+          0 4px 20px var(--shadow-dark),
+          0 0 10px var(--shadow-glow);
+      }
+
+      #about {
+        display: none;
+      }
+
+      /* Modal Styles */
+      #simplemodal-overlay {
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+      }
+
+      #simplemodal-container {
+        height: auto;
+        max-height: 80vh;
+        width: min(90vw, 700px);
+        color: var(--text-primary);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 20px 60px var(--shadow-dark);
+        overflow-y: auto;
+      }
+
+      #simplemodal-container .simplemodal-data {
+        padding: 0;
+      }
+
+      #simplemodal-container h3 {
+        color: var(--accent-primary);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 0 0 10px var(--shadow-glow);
+      }
+
+      #simplemodal-container p,
+      #simplemodal-container div {
+        line-height: 1.6;
+        margin-bottom: 16px;
+      }
+
+      #simplemodal-container code {
+        background: var(--bg-primary);
+        border-left: 3px solid var(--accent-success);
+        color: var(--text-primary);
+        display: inline-block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+        margin: 8px 0;
+        padding: 8px 12px;
+        border-radius: 4px;
+      }
+
+      #simplemodal-container a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      #simplemodal-container a:hover {
+        color: var(--accent-secondary);
+        text-decoration: underline;
+      }
+
+      #simplemodal-container a.modalCloseImg {
+        background: var(--accent-secondary);
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3200;
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        cursor: pointer;
+        border-radius: 50%;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+
+      #simplemodal-container a.modalCloseImg:hover {
+        background: var(--accent-primary);
+        transform: scale(1.1);
+      }
+
+      #simplemodal-container a.modalCloseImg::before {
+        content: "×";
+      }
+
+      /* Custom styles for attack text */
+      .attack-source {
+        color: var(--accent-secondary);
+        font-weight: 500;
+      }
+
+      .attack-target {
+        color: var(--accent-success);
+        font-weight: 500;
+      }
+
+      .attack-type {
+        color: var(--accent-primary);
+        font-weight: 400;
+      }
+
+      /* Hover info styling */
+      .hoverinfo {
+        color: var(--text-primary) !important;
+        background: rgba(26, 26, 46, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color) !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        font-family: "Inter", sans-serif !important;
+        font-size: 14px !important;
+        box-shadow: 0 8px 25px var(--shadow-dark) !important;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        #attackdiv {
+          width: calc(100vw - 40px);
+          left: 20px;
+          font-size: 11px;
+          max-height: 150px;
+        }
+
+        #aboutdiv {
+          width: 50px;
+          height: 50px;
+          top: 80px;
+          right: 20px;
+        }
+
+        #simplemodal-container {
+          padding: 20px;
+        }
+
+        #titlediv {
+          padding: 15px;
+        }
+      }
+
+      /* Loading animation */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .loading {
+        animation: pulse 2s infinite;
+      }
+
+      /* Enhance map borders and geography */
+      .datamaps-subunit {
+        stroke: var(--border-color) !important;
+        stroke-width: 0.5px !important;
+      }
+
+      .datamaps-arc {
+        opacity: 0.8 !important;
+      }
+
+      .datamaps-bubble {
+        opacity: 0.7 !important;
+      }
+    </style>
+
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://datamaps.github.io/scripts/datamaps.world.min.js?v=1"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="jquery.simplemodal-1.4.4.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    <script>
+      function about() {
+        $("#about").modal();
+      }
+    </script>
+  </head>
+
+  <body>
+    <audio id="starwars" src="Blaster-Solo.wav" preload="auto"></audio>
+    <audio id="tng" src="tng_torpedo_clean.mp3" preload="auto"></audio>
+    <audio id="b5" src="B5-interceptor1.wav" preload="auto"></audio>
+    <audio id="wargames" src="WarGames-KeyPress.wav" preload="auto"></audio>
+    <audio id="pew" src="pew.mp3" preload="auto"></audio>
+    <audio id="galaga" src="shot_sound.mp3" preload="auto"></audio>
+    <audio id="asteroids" src="asteroids.mp3" preload="auto"></audio>
+    <audio id="china" src="china.mp3" preload="auto"></audio>
+    <audio id="timallen" src="timallen.wav" preload="auto"></audio>
+
+    <div id="container1"></div>
+
+    <div id="titlediv">IPew Attack Map</div>
+
+    <div id="attackdiv"></div>
+
+    <div id="aboutdiv">
+      <i class="fas fa-question-circle fa-lg" onClick="about();"></i>
+    </div>
+
+    <div id="ccdiv">
+      <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+        <img
+          alt="Creative Commons License"
+          style="border-width: 0"
+          src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
+        />
+      </a>
+    </div>
+
+    <div id="about">
+      <h3>About IPew</h3>
+      <div>
+        Attack maps are the <code>&lt;blink&gt;</code> tag of information security. They are pure eye candy, meant to
+        scare the general public and <em>WOW</em> unsuspecting executives visiting Security Operations Centers. Yet,
+        security vendors keep cranking them out. We didn't want organizations without "real" data or l33t animation
+        skills to feel left out, so we built this map for anyone to use [CC BY-SA]. Plus, they're all missing sound
+        effects! And, most (all, really) use mind-numbingly dumb map projections, begging the question:
+        <em>"Does Greenland make my map look big?"</em>.
+      </div>
+      <div>
+        The default map uses a statistical model (infrequently updated) for source "attack" node country of origin &amp;
+        frequency while destinations are fully randomized. The default sound is a Star Wars "blaster" (guess which
+        one!). Sounds can be customized and an organization name can be specified, plus there are a few other
+        <em>interesting</em> options.
+      </div>
+      <div>
+        Check out the <a target="_blank" href="http://github.com/hrbrmstr/pewpew">github repository</a> for more
+        information and instructions on how to customize the map options for maximum effect.
+      </div>
+      <div>
+        Brought to you by <a target="_blank" href="https://bsky.app/profile/alexcp.bsky.social">@alexcp.bsky.social</a>,
+        <a target="_blank" href="https://bsky.app/profile/hrbrmstr.dev">@hrbrmstr</a>
+      </div>
+    </div>
+
+    <a href="#!" class="modal-close" title="Close this modal" data-dismiss="modal" data-close="Close">&times;</a>
+
+    <script>
+      // setup default min/max timer range for random draw
+      attack_min = 100;
+      attack_max = 2000;
+
+      // add/change the attack types here
+      attack_type = [
+        "any port scan in a storm",
+        "ssh brutish force",
+        "Thought Leader Tweet",
+        "SYN FLOOD BA-BY",
+        "Spotty",
+        "Heartbleed Hotel",
+        "Po_ODLE",
+        "Sharknado",
+        "CORGI Attack",
+        "Ping of DOOM",
+        "Conficker",
+        "Goldfinger",
+        "SANDPAPER",
+        "SNAILshock",
+        "Spaghetti RAT",
+        "Driduplex",
+      ];
+
+      // gotta add types here if you add more sounds (or delete them)
+      audio_type = ["starwars", "tng", "b5", "wargames", "pew", "galaga", "asteroids", "china", "timallen"];
+
+      // need this to more easily grab URI query parameters
+      $.extend({
+        getUrlVars: function () {
+          var vars = [],
+            hash;
+          var hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");
+          for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split("=");
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+          }
+          return vars;
+        },
+        getUrlVar: function (name) {
+          return $.getUrlVars()[name];
+        },
+      });
+
+      // here is where we deal with parameters
+      var norse_mode = $.getUrlVar("norse_mode");
+      var bad_day = $.getUrlVar("bad_day");
+      var org_name = $.getUrlVar("org_name");
+      var chatt_mode = $.getUrlVar("chatt_mode");
+      var china_mode = $.getUrlVar("china_mode");
+      var dprk_mode = $.getUrlVar("dprk_mode");
+      var employee_mode = $.getUrlVar("employee_mode");
+      var employee_fname = $.getUrlVar("employee_fname");
+      var employee_lname = $.getUrlVar("employee_lname");
+      var origin = $.getUrlVar("origin");
+      var random_mode = $.getUrlVar("random_mode");
+      var tng = $.getUrlVar("tng");
+      var wargames = $.getUrlVar("wargames");
+      var b5 = $.getUrlVar("b5");
+      var nofx = $.getUrlVar("nofx");
+      var pew = $.getUrlVar("pew");
+      var allfx = $.getUrlVar("allfx");
+      var galaga = $.getUrlVar("galaga");
+      var asteroids = $.getUrlVar("asteroids");
+      var china = $.getUrlVar("china");
+      var timallen = $.getUrlVar("timallen");
+      var drill_mode = $.getUrlVar("drill_mode");
+      var in_lat = $.getUrlVar("lat");
+      var in_lon = $.getUrlVar("lon");
+      var destination = $.getUrlVar("destination");
+      var greenattacks = $.getUrlVar("greenattacks");
+      var redattacks = $.getUrlVar("redattacks");
+
+      snd_id = "starwars";
+      if (typeof tng !== "undefined") {
+        snd_id = "tng";
+      }
+      if (typeof b5 !== "undefined") {
+        snd_id = "b5";
+      }
+      if (typeof wargames !== "undefined") {
+        snd_id = "wargames";
+      }
+      if (typeof pew !== "undefined") {
+        snd_id = "pew";
+      }
+      if (typeof galaga !== "undefined") {
+        snd_id = "galaga";
+      }
+      if (typeof asteroids !== "undefined") {
+        snd_id = "asteroids";
+      }
+      if (typeof china !== "undefined") {
+        snd_id = "china";
+      }
+      if (typeof timallen !== "undefined") {
+        snd_id = "timallen";
+      }
+
+      if (typeof bad_day !== "undefined") {
+        attack_min = 200;
+        attack_max = 200;
+      }
+
+      if (typeof org_name !== "undefined") {
+        $("#titlediv")
+          .text(decodeURI(org_name) + " IPew Attack Map")
+          .html();
+      }
+
+      // we maintain a fixed queue of "attacks" via this class
+      function FixedQueue(size, initialValues) {
+        initialValues = initialValues || [];
+        var queue = Array.apply(null, initialValues);
+        queue.fixedSize = size;
+        queue.push = FixedQueue.push;
+        queue.splice = FixedQueue.splice;
+        queue.unshift = FixedQueue.unshift;
+        FixedQueue.trimTail.call(queue);
+        return queue;
+      }
+
+      FixedQueue.trimHead = function () {
+        if (this.length <= this.fixedSize) {
+          return;
+        }
+        Array.prototype.splice.call(this, 0, this.length - this.fixedSize);
       };
-      return( wrapper );
-    };
 
-    FixedQueue.push = FixedQueue.wrapMethod( "push", FixedQueue.trimHead );
-    FixedQueue.splice = FixedQueue.wrapMethod( "splice", FixedQueue.trimTail );
-    FixedQueue.unshift = FixedQueue.wrapMethod( "unshift", FixedQueue.trimTail );
+      FixedQueue.trimTail = function () {
+        if (this.length <= this.fixedSize) {
+          return;
+        }
+        Array.prototype.splice.call(this, this.fixedSize, this.length - this.fixedSize);
+      };
 
-    var rand = function(min, max) {
+      FixedQueue.wrapMethod = function (methodName, trimMethod) {
+        var wrapper = function () {
+          var method = Array.prototype[methodName];
+          var result = method.apply(this, arguments);
+          trimMethod.call(this);
+          return result;
+        };
+        return wrapper;
+      };
+
+      FixedQueue.push = FixedQueue.wrapMethod("push", FixedQueue.trimHead);
+      FixedQueue.splice = FixedQueue.wrapMethod("splice", FixedQueue.trimTail);
+      FixedQueue.unshift = FixedQueue.wrapMethod("unshift", FixedQueue.trimTail);
+
+      var rand = function (min, max) {
         return Math.random() * (max - min) + min;
-    };
+      };
 
-    var getRandomCountry = function(countries, weight) {
-
+      var getRandomCountry = function (countries, weight) {
         var total_weight = weight.reduce(function (prev, cur, i, arr) {
-            return prev + cur;
+          return prev + cur;
         });
 
         var random_num = rand(0, total_weight);
         var weight_sum = 0;
 
         for (var i = 0; i < countries.length; i++) {
-            weight_sum += weight[i];
-            weight_sum = +weight_sum.toFixed(2);
+          weight_sum += weight[i];
+          weight_sum = +weight_sum.toFixed(2);
 
-            if (random_num <= weight_sum) {
-                return countries[i];
-            }
+          if (random_num <= weight_sum) {
+            return countries[i];
+          }
         }
+      };
 
-    };
+      // need to make this dynamic since it is approximated from sources
+      var countries = [9, 22, 29, 49, 56, 58, 78, 82, 102, 117, 139, 176, 186];
+      var weight = [0.0, 0.001, 0.004, 0.008, 0.009, 0.037, 0.181, 0.002, 0.0, 0.415, 0.006, 0.075, 0.088];
 
-    // need to make this dynamic since it is approximated from sources
+      // Enhanced map configuration with modern styling
+      var map = new Datamap({
+        scope: "world",
+        element: document.getElementById("container1"),
+        projection: "winkel3",
 
-    var countries = [9,22,29,49,56,58,78,82,102,117,139,176,186] ;
-    var weight = [0.000,0.001,0.004,0.008,0.009,0.037,0.181,0.002,0.000,0.415,0.006,0.075,0.088];
-
-    // the fun begins!
-    //
-    // pretty simple setup ->
-    // * make base Datamap
-    // * setup timers to add random events to a queue
-    // * update the Datamap
-
-    var map = new Datamap({
-
-        scope: 'world',
-        element: document.getElementById('container1'),
-        projection: 'winkel3',
-        // change the projection to something else only if you have absolutely no cartographic sense
-
-        fills: { defaultFill: 'black', },
+        fills: {
+          defaultFill: "#16213e",
+        },
 
         geographyConfig: {
           dataUrl: null,
           hideAntarctica: true,
-          borderWidth: 0.75,
-          borderColor: '#4393c3',
-          popupTemplate: function(geography, data) {
-            return '<div class="hoverinfo" style="color:white;background:black">' +
-                   geography.properties.name + '</div>';
+          borderWidth: 0.5,
+          borderColor: "#2d3748",
+          popupTemplate: function (geography, data) {
+            return '<div class="hoverinfo">' + geography.properties.name + "</div>";
           },
           popupOnHover: true,
-          highlightOnHover: false,
-          highlightFillColor: 'black',
-          highlightBorderColor: 'rgba(250, 15, 160, 0.2)',
-          highlightBorderWidth: 2
+          highlightOnHover: true,
+          highlightFillColor: "#1a1a2e",
+          highlightBorderColor: "#00d4ff",
+          highlightBorderWidth: 1,
         },
 
-      })
+        arcConfig: {
+          strokeColor: "#00d4ff",
+          strokeWidth: 2,
+          arcSharpness: 1.4,
+          animationSpeed: 1000,
+        },
+      });
 
-    // we read in a modified file of all country centers
-    var centers = [] ;
-    d3.tsv("country_centroids_primary.csv", function(data) { centers = data; });
-    d3.csv("samplatlong.csv", function(data) { slatlong = data; });
-    d3.csv("cnlatlong.csv", function(data) { cnlatlong = data; });
+      // we read in a modified file of all country centers
+      var centers = [];
+      d3.tsv("country_centroids_primary.csv", function (data) {
+        centers = data;
+      });
+      d3.csv("samplatlong.csv", function (data) {
+        slatlong = data;
+      });
+      d3.csv("cnlatlong.csv", function (data) {
+        cnlatlong = data;
+      });
 
-    // setup structures for the "hits" (arcs)
-    // and circle booms
+      // setup structures for the "hits" (arcs) and circle booms
+      var hits = FixedQueue(7, []);
+      var boom = FixedQueue(7, []);
 
-    var hits = FixedQueue( 7, [  ] );
-    var boom = FixedQueue( 7, [  ] );
+      // we need random numbers and also a way to build random ip addresses
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      function getOctet() {
+        return Math.round(Math.random() * 255);
+      }
+      function randomIP() {
+        return getOctet() + "." + getOctet() + "." + getOctet() + "." + getOctet();
+      }
+      function getStroke() {
+        return Math.round(Math.random() * 100);
+      }
+      function getDestination() {
+        return Math.round(Math.random() * 100);
+      }
 
-    // we need random numbers and also a way to build random ip addresses
-    function getRandomInt(min, max) {return Math.floor(Math.random() * (max - min + 1)) + min;}
-    function getOctet() {return Math.round(Math.random()*255);}
-    function randomIP () { return(getOctet() + '.' + getOctet() + '.' + getOctet() + '.' + getOctet()); }
-    function getStroke() {return Math.round(Math.random()*100);}
-    function getDestination() {return Math.round(Math.random()*100);}
-
-    // doing this a bit fancy for a hack, but it makes it
-    // easier to group code functions together and have variables
-    // out of global scope
-    var attacks = {
-
+      var attacks = {
         interval: getRandomInt(attack_min, attack_max),
 
-        init: function(){
-           setTimeout(
-               jQuery.proxy(this.getData, this),
-               this.interval
-           );
+        init: function () {
+          setTimeout(jQuery.proxy(this.getData, this), this.interval);
         },
 
-       getData: function() {
+        getData: function () {
+          var self = this;
 
-           var self = this;
+          if (typeof norse_mode !== "undefined") {
+            return;
+          }
 
-           if (typeof norse_mode !== 'undefined') { return; }
+          if (typeof random_mode !== "undefined") {
+            Math.floor(Math.random() * slatlong.length);
+          }
 
-           if (typeof random_mode !== 'undefined') { Math.floor((Math.random() * slatlong.length)); }
+          dst = Math.floor(Math.random() * slatlong.length);
+          src = Math.floor(Math.random() * slatlong.length);
 
-           dst = Math.floor((Math.random() * slatlong.length));
-           src = Math.floor((Math.random() * slatlong.length));
+          if (dst == src) {
+            dst = src + 1;
+            if (dst > slatlong.length - 1) {
+              dst = src - 1;
+            }
+          }
 
-           if ((dst == src)) {
-            dst = src + 1 ;
-            if (dst > slatlong.length-1) { dst = src - 1 }
-           }
+          if (typeof allfx !== "undefined") {
+            snd_id = audio_type[Math.floor(Math.random() * audio_type.length)];
+          }
 
-           if (typeof allfx !== 'undefined') {
-             snd_id = audio_type[Math.floor((Math.random() * audio_type.length))];
-           }
-           // no guarantee of sound playing w/o the load - stupid browsers
-           if (typeof nofx === 'undefined') {
-             document.getElementById(snd_id).load();
-             document.getElementById(snd_id).play();
-           }
+          // no guarantee of sound playing w/o the load - stupid browsers
+          if (typeof nofx === "undefined") {
+            document.getElementById(snd_id).load();
+            document.getElementById(snd_id).play();
+          }
 
-           // add hit to the arc queue
-           // use strokeColor to set arc line color
+          var srclat = slatlong[src].lat;
+          var srclong = slatlong[src].long;
+          var dstlat = slatlong[dst].lat;
+          var dstlong = slatlong[dst].long;
+          which_attack = attack_type[Math.floor(Math.random() * attack_type.length)];
+          var srccountry = slatlong[src]["country"];
 
-           var srclat = slatlong[src].lat;
-           var srclong = slatlong[src].long;
-           var dstlat = slatlong[dst].lat;
-           var dstlong = slatlong[dst].long;
-           which_attack = attack_type[Math.floor((Math.random() * attack_type.length))];
-           var srccountry = slatlong[src]["country"];
-           // "Hi, Mandiant!!"
-           if (typeof china_mode !== 'undefined') {
-             srclat = cnlatlong[src].lat;
-             srclong = cnlatlong[src].long;
-             if (cnlatlong[src].country=="chn") { which_attack = "ZOMGOSH CHINA!!!!!!"; }
-             srccountry = cnlatlong[src]["country"];
-           }
-           // "Hi, Kim Jong!"
-           else if (typeof dprk_mode !== 'undefined') {
-             srclat = 39.0194;
-             srclong = 125.7381;
-             which_attack = "ZOMG NORTH KOREAZ!!!";
-             srccountry = "kp";
-           }
-           // source is always Chattanooga if chatt_mode is set
-           // "Hi ThreatStream!!" http://www.csoonline.com/article/2689609/network-security/threat-intelligence-firm-mistakes-research-for-nation-state-attack.html
-           else if (typeof chatt_mode !== 'undefined') {
-             srclat = 35.0456297;
-             srclong = -85.30968;
-             which_attack = "OMG NATION STATE CHATTANOOGA!!!";
-             srccountry = "usa";
-           }
-           // blame a former employee
-           else if (typeof employee_mode !== 'undefined') {
-             if (typeof in_lat !== 'undefined' && typeof in_lon !== 'undefined') {
-               srclat = in_lat;
-               srclong = in_lon;
-             }
-             which_attack = "Former employee attack"
-             if (typeof employee_fname !== 'undefined' && typeof employee_lname !== 'undefined') {
-               which_attack += ":" + employee_fname + " " + employee_lname;
-             }
-             srccountry = "usa";
-           }
-
-           // Specify a country
-           else if (typeof origin !== 'undefined') {
-             srccountry = origin.toUpperCase();
-             var center_id = 0;
-             for (i = 0; i < centers.length; i ++) {
-               center_id = i;
-               if (centers[i].FIPS10 === srccountry) {
+          // "Hi, Mandiant!!"
+          if (typeof china_mode !== "undefined") {
+            srclat = cnlatlong[src].lat;
+            srclong = cnlatlong[src].long;
+            if (cnlatlong[src].country == "chn") {
+              which_attack = "ZOMGOSH CHINA!!!!!!";
+            }
+            srccountry = cnlatlong[src]["country"];
+          }
+          // "Hi, Kim Jong!"
+          else if (typeof dprk_mode !== "undefined") {
+            srclat = 39.0194;
+            srclong = 125.7381;
+            which_attack = "ZOMG NORTH KOREAZ!!!";
+            srccountry = "kp";
+          }
+          // source is always Chattanooga if chatt_mode is set
+          else if (typeof chatt_mode !== "undefined") {
+            srclat = 35.0456297;
+            srclong = -85.30968;
+            which_attack = "OMG NATION STATE CHATTANOOGA!!!";
+            srccountry = "usa";
+          }
+          // blame a former employee
+          else if (typeof employee_mode !== "undefined") {
+            if (typeof in_lat !== "undefined" && typeof in_lon !== "undefined") {
+              srclat = in_lat;
+              srclong = in_lon;
+            }
+            which_attack = "Former employee attack";
+            if (typeof employee_fname !== "undefined" && typeof employee_lname !== "undefined") {
+              which_attack += ":" + employee_fname + " " + employee_lname;
+            }
+            srccountry = "usa";
+          }
+          // Specify a country
+          else if (typeof origin !== "undefined") {
+            srccountry = origin.toUpperCase();
+            var center_id = 0;
+            for (i = 0; i < centers.length; i++) {
+              center_id = i;
+              if (centers[i].FIPS10 === srccountry) {
                 break;
-               }
-             }
+              }
+            }
+            srccountry = origin.toLowerCase();
+            srclat = centers[center_id].LAT;
+            srclong = centers[center_id].LONG;
+          }
 
-             srccountry = origin.toLowerCase();
-             srclat = centers[center_id].LAT;
-             srclong = centers[center_id].LONG;
-           }
-
-           // Specify a destination country
-           if (typeof destination !== 'undefined' && getDestination() < 80) {
-             dstcountry = destination.toUpperCase();
-             var center_id = 0;
-             for (i = 0; i < centers.length; i ++) {
-               center_id = i;
-               if (centers[i].FIPS10 === dstcountry) {
+          // Specify a destination country
+          if (typeof destination !== "undefined" && getDestination() < 80) {
+            dstcountry = destination.toUpperCase();
+            var center_id = 0;
+            for (i = 0; i < centers.length; i++) {
+              center_id = i;
+              if (centers[i].FIPS10 === dstcountry) {
                 break;
-               }
-             }
-
-             dstcountry = destination.toLowerCase();
-             attackdiv_slatlong = dstcountry;
-             dstlat = centers[center_id].LAT;
-             dstlong = centers[center_id].LONG;
-           }
-           else {
+              }
+            }
+            dstcountry = destination.toLowerCase();
+            attackdiv_slatlong = dstcountry;
+            dstlat = centers[center_id].LAT;
+            dstlong = centers[center_id].LONG;
+          } else {
             attackdiv_slatlong = slatlong[dst]["country"];
-           }
+          }
 
-           // Specify attack color
-           if (typeof greenattacks !== 'undefined') {
-             strokeColor = 'green';
-           }
-           else if (typeof redattacks !== 'undefined') {
-             strokeColor = 'red';
-           }
-           else {
-             if (getStroke() < 70) {
-               strokeColor = 'green';
-             }
-             else {
-               strokeColor = 'red';
-             }
-           }
+          // Specify attack color with modern color scheme
+          if (typeof greenattacks !== "undefined") {
+            strokeColor = "#51cf66";
+          } else if (typeof redattacks !== "undefined") {
+            strokeColor = "#ff6b6b";
+          } else {
+            if (getStroke() < 70) {
+              strokeColor = "#51cf66";
+            } else {
+              strokeColor = "#ff6b6b";
+            }
+          }
 
-           if (typeof drill_mode != 'undefined') {
+          if (typeof drill_mode != "undefined") {
+            dstlat = in_lat;
+            dstlong = in_lon;
+          }
 
-              dstlat = in_lat
-              dstlong = in_lon
-           }
+          //only attempt to queue draws if the page is not hidden;
+          //trying to draw while the page is hidden causes the JS heap to balloon rapidly
+          if (!document.hidden) {
+            hits.push({
+              origin: { latitude: +srclat, longitude: +srclong },
+              destination: { latitude: +dstlat, longitude: +dstlong },
+            });
+            map.arc(hits, { strokeWidth: 2, strokeColor: strokeColor });
 
-           //only attempt to queue draws if the page is not hidden;
-           //trying to draw while the page is hidden causes the JS heap to balloon rapidly
-           if(!document.hidden) {
-               hits.push({
-                   origin: {latitude: +srclat, longitude: +srclong},
-                   destination: {latitude: +dstlat, longitude: +dstlong}
-               });
-               map.arc(hits, {strokeWidth: 2, strokeColor: strokeColor});
+            // add boom to the bubbles queue
+            boom.push({
+              radius: 7,
+              latitude: +dstlat,
+              longitude: +dstlong,
+              fillOpacity: 0.6,
+              attk: which_attack,
+              fillKey: "boom",
+            });
+            map.bubbles(boom, {
+              popupTemplate: function (geo, data) {
+                return '<div class="hoverinfo">' + data.attk + "</div>";
+              },
+            });
 
-               // add boom to the bubbles queue
+            // update the scrolling attack div with modern styling
+            $("#attackdiv").append(
+              '<span class="attack-source">' +
+                srccountry +
+                "</span> (" +
+                randomIP() +
+                ") " +
+                '<span class="attack-target">attacks</span> ' +
+                '<span class="attack-source">' +
+                attackdiv_slatlong +
+                "</span> (" +
+                randomIP() +
+                ") " +
+                '<span class="attack-type">(' +
+                which_attack +
+                ")</span>" +
+                "<br/>",
+            );
+            $("#attackdiv").animate({ scrollTop: $("#attackdiv").prop("scrollHeight") }, 500);
+          }
 
-               boom.push({
-                   radius: 7, latitude: +dstlat, longitude: +dstlong,
-                   fillOpacity: 0.5, attk: which_attack
-               });
-               map.bubbles(boom, {
-                   popupTemplate: function (geo, data) {
-                       return '<div class="hoverinfo">' + data.attk + '</div>';
-                   }
-               });
+          // pick a new random time and start the timer again!
+          this.interval = getRandomInt(attack_min, attack_max);
+          this.init();
+        },
+      };
 
-               // update the scrolling attack div
-               $('#attackdiv').append(srccountry + " (" + randomIP() + ") " +
-                   " <span style='color:red'>attacks</span> " +
-                   attackdiv_slatlong + " (" + randomIP() + ") " +
-                   " <span style='color:steelblue'>(" + which_attack + ")</span> " +
-                   "<br/>");
-               $('#attackdiv').animate({scrollTop: $('#attackdiv').prop("scrollHeight")}, 500);
-           }
-           // pick a new random time and start the timer again!
-           this.interval = getRandomInt(attack_min, attack_max);
-           this.init() ;
-       },
+      // start the ball rolling!
+      attacks.init();
 
-    };
-
-    // start the ball rolling!
-    attacks.init();
-
-    // lazy-dude's responsive window
-    d3.select(window).on('resize', function() { location.reload(); });
-
-</script>
-
-</body>
+      // enhanced responsive window handling
+      d3.select(window).on("resize", function () {
+        setTimeout(function () {
+          location.reload();
+        }, 100);
+      });
+    </script>
+  </body>
 </html>
